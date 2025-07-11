@@ -1,17 +1,25 @@
 package com.github.GanenkovNA.ssh.commands.ip.a;
 
 import com.github.GanenkovNA.ssh.client.SshChannel;
+import com.github.GanenkovNA.ssh.commands.ip.a.dto.InterfaceDTO;
+import com.github.GanenkovNA.ssh.commands.ip.a.service.IpAParser;
 import com.jcraft.jsch.Session;
+
+import java.util.List;
 
 public class IpA {
 
-    public static void showInterfaces(Session session){
+    public static List<InterfaceDTO> showInterfaces(Session session){
         SshChannel channel = new SshChannel(session);
 
         String[] result = channel.execChannel("ip a");
 
-        System.out.println("Код завершения: " + result[0]);
-        System.out.println("Результат (stdout): \n" + result[1]);
-        System.out.println("Ошибки (stderr): \n" + result[2]);
+        if (result[0].equals(Integer.toString(0))){
+            return IpAParser.parse(result[1]);
+        } else {
+            throw new RuntimeException("Команда 'ip a' не была успешно выполнена" +
+                    "\nКод завершения: " + result[0] +
+                    "\nВывод stderr: " + result[2]);
+        }
     }
 }

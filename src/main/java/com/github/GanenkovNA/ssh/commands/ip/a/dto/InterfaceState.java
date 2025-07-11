@@ -1,4 +1,4 @@
-package com.github.GanenkovNA.ssh.commands.ip.a;
+package com.github.GanenkovNA.ssh.commands.ip.a.dto;
 
 public enum InterfaceState {
     /**

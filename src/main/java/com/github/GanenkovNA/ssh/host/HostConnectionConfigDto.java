@@ -3,6 +3,7 @@ package com.github.GanenkovNA.ssh.host;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.NonNull;
 
 /**
@@ -28,6 +29,7 @@ import lombok.NonNull;
  * @see lombok.NonNull
  */
 @Data
+@NoArgsConstructor
 public class HostConnectionConfigDto {
     @NonNull
     private String host;
