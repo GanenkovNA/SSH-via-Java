@@ -7,14 +7,70 @@ import com.jcraft.jsch.Session;
 import java.io.IOException;
 import java.io.InputStream;
 
+/**
+ * Представляет SSH-канал для выполнения команд на удалённом сервере в рамках существующей сессии.
+ * Канал автоматически закрывается после выполнения команды.
+ * <p>
+ * Пример использования:
+ * <pre>
+ * {@code
+ * SshChannel sshChannel = new SshChannel(session);
+ * String[] result = sshChannel.execChannel("ls -la");
+ * System.out.println("Код выхода: " + result[0]);
+ * System.out.println("Stdout: " + result[1]);
+ * }
+ * </pre>
+ *
+ * @see Session (JSch)
+ * @see ChannelExec
+ */
 public class SshChannel {
     private final Session session;
+    /**
+     * Код завершения последней выполненной SSH-команды.
+     * <p>
+     * Содержит:
+     * <ul>
+     *   <li>{@code null} — если команда ещё не выполнялась</li>
+     *   <li>{@code 0} — успешное выполнение</li>
+     *   <li>{@code >0} — код ошибки (зависит от команды)</li>
+     * </ul>
+     *  
+     * @see #execChannel(String) 
+     */
     private Integer exitStatus;
 
+    /**
+     * Создает SSH-канал для выполнения команд в рамках существующей сессии.
+     * <p>
+     * Канал будет использовать переданную сессию, но не управляет её жизненным циклом
+     * (сессию нужно закрывать отдельно через {@link SshSession#closeSession()}).
+     * </p>
+     *
+     * @param session Готовая SSH-сессия. Не может быть {@code null} или закрытой.
+     * @throws IllegalStateException если сессия неактивна (отсутствует или разорвана).
+     */
     public SshChannel(Session session) {
+        if (session == null || !session.isConnected()){
+            throw new IllegalArgumentException("Сессия должна быть запущена");
+        }
         this.session = session;
     }
 
+    /**
+     * Выполняет команду на удалённом сервере через SSH-канал типа "exec".
+     * <p>
+     * Возвращает массив строк:
+     * <ol>
+     *   <li>Код завершения команды (exit status).</li>
+     *   <li>Вывод команды (stdout).</li>
+     *   <li>Ошибки команды (stderr).</li>
+     * </ol>
+     *
+     * @param command Команда для выполнения (например, "ls -la").
+     * @return Массив строк {@code [exitStatus, stdout, stderr]}.
+     * @throws RuntimeException если произошла ошибка ввода-вывода или прерывание потока.
+     */
     public String[] execChannel(String command){
         try{
             // Открываем канал для выполнения команд
@@ -63,7 +119,14 @@ public class SshChannel {
         }
     }
 
-    // Метод для печати потока
+    /**
+     * Считывает данные из потока (stdout/stderr) и сохраняет их в буфер.
+     * Используется внутренне в {@link #execChannel(String)}.
+     *
+     * @param stream   Входной поток (InputStream).
+     * @param stdBuffer Буфер для сохранения данных.
+     * @throws RuntimeException если поток не может быть прочитан.
+     */
     private static void printStream(InputStream stream, StringBuilder stdBuffer) {
         try {
             byte[] buffer = new byte[1024];
