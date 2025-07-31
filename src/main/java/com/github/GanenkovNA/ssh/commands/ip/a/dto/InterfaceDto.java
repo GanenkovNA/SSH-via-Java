@@ -1,7 +1,7 @@
 package com.github.GanenkovNA.ssh.commands.ip.a.dto;
 
-import com.github.GanenkovNA.ssh.commands.ip.a.dto.addr.InterfaceIpv4ConfigDto;
-import com.github.GanenkovNA.ssh.commands.ip.a.dto.addr.InterfaceIpv6ConfigDto;
+import com.github.GanenkovNA.ssh.commands.ip.a.dto.addr.v4.InterfaceIpv4ConfigDto;
+import com.github.GanenkovNA.ssh.commands.ip.a.dto.addr.v6.InterfaceIpv6ConfigDto;
 import com.github.GanenkovNA.ssh.commands.ip.a.dto.base.InterfaceBaseConfigDto;
 import com.github.GanenkovNA.ssh.commands.ip.a.dto.physical.InterfacePhysicalConfigDto;
 import java.util.ArrayList;

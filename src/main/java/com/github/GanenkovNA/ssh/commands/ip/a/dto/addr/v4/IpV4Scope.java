@@ -1,4 +1,6 @@
-package com.github.GanenkovNA.ssh.commands.ip.a.dto.addr;
+package com.github.GanenkovNA.ssh.commands.ip.a.dto.addr.v4;
+
+import java.util.Arrays;
 
 /**
  * Область видимости IPv4-адреса.
@@ -17,5 +19,17 @@ public enum IpV4Scope {
   LINK,
 
   /** Только на хосте (loopback). */
-  HOST
+  HOST;
+
+  public static boolean contains(String input) {
+    if (input == null) {
+      return false;
+    }
+    return Arrays.stream(values())
+        .anyMatch(e -> e.name().equalsIgnoreCase(input));
+  }
+
+  public static IpV4Scope getIgnoreCase(String input){
+    return IpV4Scope.valueOf(input.toUpperCase());
+  }
 }

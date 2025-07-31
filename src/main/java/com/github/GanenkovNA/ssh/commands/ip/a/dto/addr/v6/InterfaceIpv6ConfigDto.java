@@ -1,5 +1,6 @@
-package com.github.GanenkovNA.ssh.commands.ip.a.dto.addr;
+package com.github.GanenkovNA.ssh.commands.ip.a.dto.addr.v6;
 
+import com.github.GanenkovNA.ssh.commands.ip.a.dto.addr.LifeTimeParamsDto;
 import com.github.GanenkovNA.ssh.commands.ip.service.IpValidation;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,10 +26,11 @@ public class InterfaceIpv6ConfigDto {
    *
    * @see IpV6Scope
    */
-  private List<IpV6Scope> scopes = new ArrayList<>();
+  private IpV6Scope scope;
 
-  /** Наличие флага noprefixroute. */
-  private Boolean isNoPrefixRoute = false;
+  private List<GenerationFlags> generationFlags = new ArrayList<>();
+
+  private List<RouteFlags> routeFlags = new ArrayList<>();
 
   /** Параметры времени жизни адреса. */
   private LifeTimeParamsDto lifeTimeParams;
@@ -47,9 +49,12 @@ public class InterfaceIpv6ConfigDto {
     this.address = address;
   }
 
-  /** Добавление параметра области действия адреса в список. */
-  public void addScope(IpV6Scope scope) {
-    scopes.add(scope);
+  public void addGenerationFlag(GenerationFlags generationFlag) {
+    generationFlags.add(generationFlag);
+  }
+
+  public void addRouteFlag(RouteFlags routeFlag) {
+    routeFlags.add(routeFlag);
   }
 
   /** Добавление нераспознанного параметра в список. */

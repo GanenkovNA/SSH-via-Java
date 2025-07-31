@@ -1,5 +1,7 @@
 package com.github.GanenkovNA.ssh.commands.ip.a.dto.base;
 
+import java.util.Arrays;
+
 /**
  * Перечисление всех возможных типов дисциплин очередей (qdisc) в Linux.
  *
@@ -98,5 +100,17 @@ public enum QdiscType {
   ETF,
 
   /** Time Aware Priority Shaper (для TSN). */
-  TAPRIO
+  TAPRIO;
+
+  public static boolean contains(String input) {
+    if (input == null) {
+      return false;
+    }
+    return Arrays.stream(values())
+        .anyMatch(e -> e.name().equalsIgnoreCase(input));
+  }
+
+  public static QdiscType getIgnoreCase(String input){
+    return QdiscType.valueOf(input.toUpperCase());
+  }
 }

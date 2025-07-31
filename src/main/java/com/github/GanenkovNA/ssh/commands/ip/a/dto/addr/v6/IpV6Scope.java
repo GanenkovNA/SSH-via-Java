@@ -1,4 +1,7 @@
-package com.github.GanenkovNA.ssh.commands.ip.a.dto.addr;
+package com.github.GanenkovNA.ssh.commands.ip.a.dto.addr.v6;
+
+import com.github.GanenkovNA.ssh.commands.ip.a.dto.addr.v4.IpV4Scope;
+import java.util.Arrays;
 
 /**
  * Область видимости IPv6-адреса.
@@ -32,5 +35,17 @@ public enum IpV6Scope {
   COMPAT,
 
   /** Динамический адрес (например, SLAAC). */
-  DYNAMIC
+  DYNAMIC;
+
+  public static boolean contains(String input) {
+    if (input == null) {
+      return false;
+    }
+    return Arrays.stream(values())
+        .anyMatch(e -> e.name().equalsIgnoreCase(input));
+  }
+
+  public static IpV6Scope getIgnoreCase(String input){
+    return IpV6Scope.valueOf(input.toUpperCase());
+  }
 }

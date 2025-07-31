@@ -1,5 +1,7 @@
 package com.github.GanenkovNA.ssh.commands.ip.a.dto.base;
 
+import java.util.Arrays;
+
 /** Хранит возможные флаги, установленные в интерфейсе. */
 public enum InterfaceFlag {
   /** Интерфейс включен административно.*/
@@ -42,5 +44,17 @@ public enum InterfaceFlag {
   DORMANT,
 
   /** Интерфейс эхо-ответчик (редко используется). */
-  ECHO
+  ECHO;
+
+  public static boolean contains(String input) {
+    if (input == null) {
+      return false;
+    }
+    return Arrays.stream(values())
+        .anyMatch(e -> e.name().equalsIgnoreCase(input));
+  }
+
+  public static InterfaceFlag getIgnoreCase(String input){
+    return InterfaceFlag.valueOf(input.toUpperCase());
+  }
 }

@@ -1,5 +1,6 @@
-package com.github.GanenkovNA.ssh.commands.ip.a.dto.addr;
+package com.github.GanenkovNA.ssh.commands.ip.a.dto.addr.v4;
 
+import com.github.GanenkovNA.ssh.commands.ip.a.dto.addr.LifeTimeParamsDto;
 import com.github.GanenkovNA.ssh.commands.ip.service.IpValidation;
 import java.util.ArrayList;
 import java.util.List;

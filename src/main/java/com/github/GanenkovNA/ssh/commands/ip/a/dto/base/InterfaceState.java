@@ -1,5 +1,7 @@
 package com.github.GanenkovNA.ssh.commands.ip.a.dto.base;
 
+import java.util.Arrays;
+
 /**
  * Состояние сетевого интерфейса из вывода `ip link`.
  *
@@ -23,5 +25,17 @@ public enum InterfaceState {
   NO_CARRIER,
 
   /** Интерфейс в режиме ожидания (например, PPPoE перед подключением). */
-  DORMANT
+  DORMANT;
+
+  public static boolean contains(String input) {
+    if (input == null) {
+      return false;
+    }
+    return Arrays.stream(values())
+        .anyMatch(e -> e.name().equalsIgnoreCase(input));
+  }
+
+  public static InterfaceState getIgnoreCase(String input){
+    return InterfaceState.valueOf(input.toUpperCase());
+  }
 }
