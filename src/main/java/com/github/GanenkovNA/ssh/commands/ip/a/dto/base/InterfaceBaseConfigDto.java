@@ -39,6 +39,8 @@ public class InterfaceBaseConfigDto {
    */
   private QdiscType qdiscType;
 
+  private String master;
+
   /**
    * Текущий статус интерфейса.
    *
