@@ -6,7 +6,10 @@ import com.github.GanenkovNA.ssh.commands.ip.a.dto.base.InterfaceBaseConfigDto;
 import com.github.GanenkovNA.ssh.commands.ip.a.dto.physical.InterfacePhysicalConfigDto;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import lombok.AccessLevel;
 import lombok.Data;
+import lombok.Setter;
 
 /**
  * Содержит полную информацию о сетевом интерфейсе.
@@ -28,26 +31,80 @@ public class InterfaceDto {
   private InterfacePhysicalConfigDto interfacePhysicalParams;
 
   /** Список IPv4-конфигураций. */
+  @Setter(AccessLevel.NONE)
   private List<InterfaceIpv4ConfigDto> ipv4 = new ArrayList<>();
 
   /** Список IPv6-конфигураций. */
+  @Setter(AccessLevel.NONE)
   private List<InterfaceIpv6ConfigDto> ipv6 = new ArrayList<>();
 
   /** Список необработанных строк вывода. */
+  @Setter(AccessLevel.NONE)
   private List<String> unknownLines = new ArrayList<>();
 
-  /** Добавление IPv4-конфигурации в список. */
+  /**
+   * Устанавливает базовые параметры сетевого интерфейса.
+   *
+   * @param interfaceParams DTO с базовыми параметрами интерфейса
+   * @throws NullPointerException если interfaceParams равен null
+   * @see InterfaceBaseConfigDto
+   */
+  public void setInterfaceParams(InterfaceBaseConfigDto interfaceParams)
+      throws NullPointerException {
+    Objects.requireNonNull(interfaceParams,
+        "Строка базовых параметров интерфейса не может быть null");
+    this.interfaceParams = interfaceParams;
+  }
+
+  /**
+   * Устанавливает физические параметры сетевого интерфейса.
+   *
+   * @param interfacePhysicalParams DTO с физическими параметрами интерфейса
+   * @throws NullPointerException если interfacePhysicalParams равен null
+   * @see InterfacePhysicalConfigDto
+   */
+  public void setInterfacePhysicalParams(InterfacePhysicalConfigDto interfacePhysicalParams)
+      throws NullPointerException {
+    Objects.requireNonNull(interfacePhysicalParams,
+        "Строка физических параметров интерфейса не может быть null");
+    this.interfacePhysicalParams = interfacePhysicalParams;
+  }
+
+  /**
+   * Добавляет IPv4-конфигурацию интерфейса.
+   *
+   * @param config DTO с IPv4-настройками интерфейса
+   * @throws NullPointerException если config равен null
+   * @see InterfaceIpv4ConfigDto
+   */
   public void addIpv4(InterfaceIpv4ConfigDto config) {
+    Objects.requireNonNull(config, "Строка IPv4-конфигурации не может быть null");
     ipv4.add(config);
   }
 
-  /** Добавление IPv6-конфигурации в список. */
+  /**
+   * Добавляет IPv6-конфигурацию интерфейса.
+   *
+   * @param config DTO с IPv6-настройками интерфейса
+   * @throws NullPointerException если config равен null
+   * @see InterfaceIpv6ConfigDto
+   */
   public void addIpv6(InterfaceIpv6ConfigDto config) {
+    Objects.requireNonNull(config, "Строка IPv6-конфигурации не может быть null");
     ipv6.add(config);
   }
 
-  /** Добавление необработанных строк вывода в список. */
+  /**
+   * Добавляет необработанную строку вывода команды.
+   *
+   * <p>Используется для сохранения строк, которые не удалось распознать,
+   * но которые могут потребоваться для полного восстановления состояния интерфейса.
+   *
+   * @param unknownLine необработанная строка вывода
+   * @throws NullPointerException если unknownLine равен null
+   */
   public void addUnknownLine(String unknownLine) {
+    Objects.requireNonNull(unknownLine, "Строка вывода не может быть null");
     unknownLines.add(unknownLine);
   }
 }

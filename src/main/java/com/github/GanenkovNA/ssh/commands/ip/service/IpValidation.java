@@ -27,18 +27,13 @@ public final class IpValidation {
    *
    * @param ip адрес для проверки
    * @return true если адрес соответствует формату
-   * @throws IllegalArgumentException если ip равен null, пустой строке или имеет неверный формат
    */
-  public static boolean validateIpv4(String ip) {
-    if (ip == null || ip.isBlank()) {
-      throw new IllegalArgumentException("Передан пустой IP");
-    } else {
-      ip = ip.trim();
-      if (IP4_PATTERN.matcher(ip).matches()) {
+  public static boolean validateIpv4(String ip)
+      throws IllegalArgumentException {
+    if (IP4_PATTERN.matcher(ip).matches()) {
         return true;
-      } else {
-        throw new IllegalArgumentException("Неверный формат IP: " + ip);
-      }
+    } else {
+        throw new IllegalArgumentException("Неверный формат IP адреса: " + ip);
     }
   }
 
@@ -47,20 +42,15 @@ public final class IpValidation {
    *
    * @param ip адрес для проверки
    * @return true если адрес соответствует формату
-   * @throws IllegalArgumentException если ip равен null, пустой строке или имеет неверный формат
    */
-  public static boolean validateIpv6(String ip) {
-    if (ip == null || ip.isBlank()) {
-      throw new IllegalArgumentException("Передан пустой IP");
+  public static boolean validateIpv6(String ip)
+      throws IllegalArgumentException {
+    if (IP6_FULL_PATTERN.matcher(ip).matches()
+        || IP6_SHORT_PATTERN.matcher(ip).matches()
+        || IP6_EMBEDDED_PATTERN.matcher(ip).matches()) {
+      return true;
     } else {
-      ip = ip.trim();
-      if (IP6_FULL_PATTERN.matcher(ip).matches()
-          || IP6_SHORT_PATTERN.matcher(ip).matches()
-          || IP6_EMBEDDED_PATTERN.matcher(ip).matches()) {
-        return true;
-      } else {
-        throw new IllegalArgumentException("Неверный формат IPv6: " + ip);
-      }
+      throw new IllegalArgumentException("Неверный формат IPv6 адреса: " + ip);
     }
   }
 }

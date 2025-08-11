@@ -26,16 +26,12 @@ public final class MacValidation {
    * @param mac адрес для проверки
    * @throws IllegalArgumentException если mac не соответствует формату
    */
-  public static boolean validateMac(String mac) {
-    if (mac == null || mac.isBlank()) {
-      throw new IllegalArgumentException("Передан пустой MAC");
+  public static boolean validateMac(String mac)
+      throws IllegalArgumentException {
+    if (MAC_PATTERN.matcher(mac).matches()) {
+      return true;
     } else {
-      mac = mac.trim();
-      if (MAC_PATTERN.matcher(mac).matches()) {
-        return true;
-      } else {
-        throw new IllegalArgumentException("Неверный формат MAC: " + mac);
-      }
+      throw new IllegalArgumentException("Неверный формат MAC-адреса: " + mac);
     }
   }
 }
