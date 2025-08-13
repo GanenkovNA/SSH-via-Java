@@ -1,5 +1,6 @@
 package com.github.GanenkovNA.ssh.commands.ip.a.dto.addr.v4;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.github.GanenkovNA.service.StringUtils;
 import com.github.GanenkovNA.ssh.commands.ip.a.dto.addr.LifeTimeParamsDto;
 import com.github.GanenkovNA.ssh.commands.ip.service.IpValidation;
@@ -20,6 +21,7 @@ import lombok.Setter;
  * @see LifeTimeParamsDto Параметры времени жизни адреса
  */
 @Data
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class InterfaceIpv4ConfigDto {
 
   /** IPv4-адрес интерфейса в формате "x.x.x.x". */
@@ -159,7 +161,7 @@ public class InterfaceIpv4ConfigDto {
    * @throws NullPointerException если ipV4AddressFlag равен null
    * @see IpV4AddressFlag
    */
-  private void addIpV4AddressFlag(IpV4AddressFlag ipV4AddressFlag)
+  public void addIpV4AddressFlag(IpV4AddressFlag ipV4AddressFlag)
       throws NullPointerException {
     Objects.requireNonNull(ipV4AddressFlag, "Значение флага состояния IPv4 не может быть null");
     ipV4AddressFlags.add(ipV4AddressFlag);

@@ -31,7 +31,7 @@ public class IpA {
     String[] result = channel.execChannel("ip a");
 
     if (result[0].equals(Integer.toString(0))) {
-      return IpAParser.parse(result[1]);
+      return IpAParser.parseOutput(result[1]);
     } else {
       throw new RuntimeException("Команда 'ip a' не была успешно выполнена"
           + "\nКод завершения: " + result[0]

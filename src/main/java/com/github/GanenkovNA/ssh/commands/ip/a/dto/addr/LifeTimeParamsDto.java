@@ -1,5 +1,6 @@
 package com.github.GanenkovNA.ssh.commands.ip.a.dto.addr;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.github.GanenkovNA.service.StringUtils;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,6 +23,7 @@ import lombok.Setter;
  * </ul>
  */
 @Data
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class LifeTimeParamsDto {
 
   /** Время жизни адреса до недействительности. */

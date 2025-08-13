@@ -1,5 +1,6 @@
 package com.github.GanenkovNA.ssh.commands.ip.a.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.github.GanenkovNA.ssh.commands.ip.a.dto.addr.v4.InterfaceIpv4ConfigDto;
 import com.github.GanenkovNA.ssh.commands.ip.a.dto.addr.v6.InterfaceIpv6ConfigDto;
 import com.github.GanenkovNA.ssh.commands.ip.a.dto.base.InterfaceBaseConfigDto;
@@ -22,6 +23,7 @@ import lombok.Setter;
  * @see InterfaceIpv6ConfigDto
  */
 @Data
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class InterfaceDto {
 
   /** Базовые параметры интерфейса. */

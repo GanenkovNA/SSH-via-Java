@@ -1,5 +1,6 @@
 package com.github.GanenkovNA.ssh.commands.ip.a.dto.base;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.github.GanenkovNA.service.StringUtils;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,6 +18,7 @@ import lombok.Setter;
  * @see <a href="https://man7.org/linux/man-pages/man8/ip-link.8.html">Документация ip-link(8)</a>
  */
 @Data
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class InterfaceBaseConfigDto {
 
   /**

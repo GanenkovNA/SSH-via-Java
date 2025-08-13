@@ -110,14 +110,14 @@ public enum IpV4AddressFlag {
    * @throws RuntimeException если нормализованная строка не соответствует ни одному элементу enum
    * @see StringUtils#normalizeForEnum(String, String, String)
    */
-  public static IpV4Scope getIgnoreCase(String input)
+  public static IpV4AddressFlag getIgnoreCase(String input)
       throws IllegalArgumentException, NullPointerException {
     input = StringUtils.normalizeForEnum(input,
         "Значение флага состояния IPv4 не может быть null",
         "Значение флага состояния IPv4 не может быть пустым");
 
     try {
-      return IpV4Scope.valueOf(input);
+      return IpV4AddressFlag.valueOf(input);
     } catch (IllegalArgumentException e) {
       throw new RuntimeException("Значение флага состояния IPv4 не найдено: " + input);
     }

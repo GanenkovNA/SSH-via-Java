@@ -1,5 +1,6 @@
 package com.github.GanenkovNA.ssh.commands.ip.a.dto.addr.v6;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.github.GanenkovNA.service.StringUtils;
 import com.github.GanenkovNA.ssh.commands.ip.a.dto.addr.LifeTimeParamsDto;
 import com.github.GanenkovNA.ssh.commands.ip.service.IpValidation;
@@ -22,6 +23,7 @@ import lombok.Setter;
  * @see LifeTimeParamsDto Параметры времени жизни адреса
  */
 @Data
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class InterfaceIpv6ConfigDto {
 
   /** IPv6-адрес интерфейса в формате RFC 5952. */

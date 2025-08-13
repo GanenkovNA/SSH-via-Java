@@ -1,5 +1,6 @@
 package com.github.GanenkovNA.ssh.commands.ip.a.dto.physical;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.github.GanenkovNA.service.StringUtils;
 import com.github.GanenkovNA.ssh.commands.ip.service.MacValidation;
 import java.util.ArrayList;
@@ -12,6 +13,7 @@ import lombok.Setter;
  * Физические параметры сетевого интерфейса.
  */
 @Data
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class InterfacePhysicalConfigDto {
 
   /** Тип канального уровня (например, "ether", "loopback"). */
