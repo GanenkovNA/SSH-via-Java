@@ -38,7 +38,8 @@ public class InterfaceIpv6ConfigDto {
    *
    * @see IpV6Scope
    */
-  private IpV6Scope scope;
+  @Setter(AccessLevel.NONE)
+  private List<IpV6Scope> scopes = new ArrayList<>();
 
   /**
    * Список флагов генерации адреса.
@@ -107,16 +108,16 @@ public class InterfaceIpv6ConfigDto {
   }
 
   /**
-   * Устанавливает область видимости IPv6-адреса.
+   * Добавляет область видимости IPv6-адреса.
    *
    * @param scope область видимости адреса
    * @throws NullPointerException если scope равен null
    * @see IpV6Scope
    */
-  public void setScope(IpV6Scope scope)
+  public void addScope(IpV6Scope scope)
       throws NullPointerException {
     Objects.requireNonNull(scope, "Значение области видимости IPv6-адреса не может быть null");
-    this.scope = scope;
+    scopes.add(scope);
   }
 
   /**

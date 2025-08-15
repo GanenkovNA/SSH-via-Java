@@ -252,7 +252,6 @@ public final class IpAParser {
   }
 
   // Парсинг конфигурации IPv4-адреса
-  // Парсинг конфигурации IPv4-адреса
   private static InterfaceIpv4ConfigDto parseIpV4Config(String line) {
     Matcher matcher;
     InterfaceIpv4ConfigDto interfaceIpv4Config = new InterfaceIpv4ConfigDto();
@@ -359,8 +358,8 @@ public final class IpAParser {
       }
       // Парсинг области видимости
       else if (isEqualIgnoreCase(parts[i], SCOPE)) {
-        if (IpV6Scope.contains(parts[i + 1])){
-          interfaceIpv6Config.setScope(
+        while (i + 1 < parts.length && IpV6Scope.isValid(parts[i + 1])) {
+          interfaceIpv6Config.addScope(
               IpV6Scope.getIgnoreCase(parts[++i]));
         }
       }

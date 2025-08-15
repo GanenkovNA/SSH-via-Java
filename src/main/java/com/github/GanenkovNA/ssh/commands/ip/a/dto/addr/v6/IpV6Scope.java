@@ -63,7 +63,7 @@ public enum IpV6Scope {
    * @return {@code true} если перечисление содержит значение с указанным именем,
    *         {@code false} если input равен null или значение не найдено
    */
-  public static boolean contains(String input) {
+  public static boolean isValid(String input) {
     if (input == null) {
       return false;
     }
