@@ -25,7 +25,7 @@ import lombok.Getter;
  * @see HostConnectionConfigDto
  * @see Session (JSch)
  */
-public class SshSession {
+public final class SshSession {
   private final HostConnectionConfigDto config;
   @Getter
   private Session session;
@@ -54,17 +54,17 @@ public class SshSession {
     try {
       JSch jsch = new JSch();
       session = jsch.getSession(
-          config.getUsername(),
-          config.getHost(),
-          config.getPort());
-      session.setPassword(config.getPassword());
+          config.username(),
+          config.host(),
+          config.port());
+      session.setPassword(config.password());
 
       // Отключаем проверку ключа хоста (небезопасно, но для теста подойдет)
       session.setConfig("StrictHostKeyChecking", "no");
 
       // Начинаем сессию
       System.out.printf("Подключение к %s:%d как %s...%n",
-          config.getHost(), config.getPort(), config.getUsername());
+          config.host(), config.port(), config.username());
       session.connect();
 
       return session;

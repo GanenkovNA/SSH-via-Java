@@ -22,7 +22,34 @@ import java.util.List;
 import java.util.Objects;
 import java.util.regex.Matcher;
 
+/**
+ * Парсер вывода команды {@code ip a} для получения структурированных данных о сетевых интерфейсах.
+ *
+ * <p>Основные функции:
+ *   <ul>
+ *     <li>Разбор многострочного вывода команды {@code ip a}
+ *     <li>Преобразование в иерархическую структуру {@link InterfaceDto}
+ *     <li>Обработка базовых параметров, физических характеристик и IP-конфигураций
+ *     <li>Сохранение нераспознанных параметров для диагностики
+ *   </ul>
+ *
+ * @see InterfaceDto Результирующая структура данных
+ * @see ParserTokens Используемые константы и регулярные выражения
+ */
 public final class IpAParser {
+
+  /**
+  * Парсит вывод команды {@code ip a} в список DTO интерфейсов.
+  *
+  * @param ipAOutput сырой вывод команды {@code ip a}
+  * @return список распарсенных интерфейсов (не {@code null}, может быть пустым)
+  * @throws NullPointerException если ipAOutput равен {@code null}
+  * @implNote Пример использования:
+  *   <pre>{@code
+  *     String ipOutput = executeCommand("ip a");
+  *     List<InterfaceDto> interfaces = IpAParser.parseOutput(ipOutput);
+  *   }</pre>
+  */
   public static List<InterfaceDto> parseOutput(String ipAOutput) {
     // Проверка вывода команды на пустую строку
     if (ipAOutput.isBlank()) {
@@ -35,7 +62,7 @@ public final class IpAParser {
 
     String[] lines = trimOutputStrings(ipAOutput);
     for (int i = 0; i < lines.length; i++) {
-      if (isInterfaceStart(lines[i])){
+      if (isInterfaceStart(lines[i])) {
         currentInterface = new InterfaceDto();
         i = parseInterface(i, lines, currentInterface);
         interfaces.add(currentInterface);
@@ -46,25 +73,37 @@ public final class IpAParser {
     return interfaces;
   }
 
-  // Проверяет, является ли строка новым интерфейсом
-  // Проверка, начинается ли строка с числа (индекс)
+  /**
+   * Проверяет, является ли строка началом блока интерфейса.
+   *
+   * @param line строка для проверки
+   * @return {@code true} если строка начинается с цифры (индекс интерфейса),
+   *         {@code false} в противном случае
+   */
   private static boolean isInterfaceStart(String line) {
     return Character.isDigit(line.charAt(0));
   }
 
-  // "Скелет" для вызова методов обработок строк
+  /**
+   * Обрабатывает блок данных для одного интерфейса.
+   *
+   * @param i текущий индекс в массиве строк
+   * @param lines все строки вывода команды
+   * @param currentInterface DTO для заполнения
+   * @return новый индекс после обработки блока
+   */
   private static int parseInterface(int i, String[] lines, InterfaceDto currentInterface) {
     // Базовые параметры интерфейса
     currentInterface.setInterfaceParams(
         parseInterfaceDetails(lines[i]));
 
     // Физические параметры
-    if (i + 1 < lines.length && isLineStart(lines[i + 1], LINK_LINE)){
+    if (i + 1 < lines.length && isLineStart(lines[i + 1], LINK_LINE)) {
       currentInterface.setInterfacePhysicalParams(
           parsePhysicalParams(lines[++i]));
     }
 
-    while (i + 1 < lines.length && !isInterfaceStart(lines[i + 1])){
+    while (i + 1 < lines.length && !isInterfaceStart(lines[i + 1])) {
       // IPv-4
       if (isLineStart(lines[i + 1], INET_LINE)) {
         i = parseInetBlock(++i, lines, currentInterface);
@@ -80,8 +119,8 @@ public final class IpAParser {
   /**
    * Обрабатывает базовые параметры интерфейса.
    *
-   * @param line Первая строка с параметрами интерфейса
-   * @return DTO
+   * @param line строка с параметрами интерфейса
+   * @return DTO с базовыми параметрами
    * @see InterfaceBaseConfigDto
    */
   private static InterfaceBaseConfigDto parseInterfaceDetails(String line) {
@@ -105,7 +144,7 @@ public final class IpAParser {
       }
       // Парсинг дисциплины очереди
       else if (isEqualIgnoreCase(parts[i], QDISC)) {
-        if (QdiscType.isValid(parts[i + 1])){
+        if (QdiscType.isValid(parts[i + 1])) {
           interfaceDetails.setQdiscType(
               QdiscType.getIgnoreCase(parts[++i]));
         } else {
@@ -118,11 +157,12 @@ public final class IpAParser {
       }
       // Парсинг состояния интерфейса
       else if (isEqualIgnoreCase(parts[i], STATE)) {
-        if(InterfaceState.isValid(parts[i + 1])){
+        if (InterfaceState.isValid(parts[i + 1])) {
           interfaceDetails.setState(
               InterfaceState.getIgnoreCase(parts[++i]));
         } else {
-          interfaceDetails.addUnknownParam("Значение состояния интерфейса не найдено: " + parts[i + 1]);
+          interfaceDetails.addUnknownParam(
+              "Значение состояния интерфейса не найдено: " + parts[i + 1]);
         }
       }
       // Парсинг группы интерфейса
@@ -145,6 +185,13 @@ public final class IpAParser {
     return interfaceDetails;
   }
 
+  /**
+   * Пытается распарсить индекс интерфейса из строки.
+   *
+   * @param line строка для анализа
+   * @param dto DTO для сохранения результата
+   * @return {@code true} если индекс успешно распознан, {@code false} в противном случае
+   */
   private static boolean tryParseIndex(String line, InterfaceBaseConfigDto dto) {
     Matcher matcher = INDEX_PATTERN.matcher(line);
     if (!matcher.find()) {
@@ -166,14 +213,21 @@ public final class IpAParser {
     return false;
   }
 
+  /**
+   * Пытается распарсить имя интерфейса из строки.
+   *
+   * @param line строка для анализа
+   * @param dto DTO для сохранения результата
+   * @return {@code true} если имя успешно распознано, {@code false} в противном случае
+   */
   private static boolean tryParseInterfaceName(String line, InterfaceBaseConfigDto dto) {
     Matcher matcher = NAME_PATTERN.matcher(line);
-    if (!matcher.find()){
+    if (!matcher.find()) {
       return false;
     }
     String name = matcher.group(1);
 
-    if(Objects.isNull(dto.getName())) {
+    if (Objects.isNull(dto.getName())) {
       dto.setName(matcher.group(1));
       return true;
     } else {
@@ -183,6 +237,13 @@ public final class IpAParser {
     return false;
   }
 
+  /**
+   * Пытается распарсить флаги интерфейса из строки.
+   *
+   * @param line строка для анализа
+   * @param dto DTO для сохранения результата
+   * @return {@code true} если флаги успешно распознаны, {@code false} в противном случае
+   */
   private static boolean tryParseFlags(String line, InterfaceBaseConfigDto dto) {
     Matcher matcher = FLAGS_PATTERN.matcher(line);
 
@@ -191,7 +252,7 @@ public final class IpAParser {
       for (String flag : flags) {
         flag = flag.trim();
         if (!flag.isEmpty()) {
-          if (InterfaceFlag.isValid(flag)){
+          if (InterfaceFlag.isValid(flag)) {
             dto.addFlag(
                 InterfaceFlag.getIgnoreCase(flag));
           } else {
@@ -204,7 +265,13 @@ public final class IpAParser {
     return false;
   }
 
-  /** Обрабатывает физические параметры интерфейса (MAC, тип канала). */
+  /**
+   * Обрабатывает физические параметры интерфейса.
+   *
+   * @param line строка с физическими параметрами
+   * @return DTO с физическими характеристиками
+   * @see InterfacePhysicalConfigDto
+   */
   private static InterfacePhysicalConfigDto parsePhysicalParams(String line) {
     Matcher matcher;
     InterfacePhysicalConfigDto interfacePhysicalParams = new InterfacePhysicalConfigDto();
@@ -218,7 +285,7 @@ public final class IpAParser {
         if (matcher.find()) {
           interfacePhysicalParams.setLinkType(matcher.group(1));
           // MAC-адрес
-          if (i + 1 < parts.length){
+          if (i + 1 < parts.length) {
             interfacePhysicalParams.setMac(parts[++i]);
           }
         }
@@ -239,7 +306,14 @@ public final class IpAParser {
     return interfacePhysicalParams;
   }
 
-  /** Обрабатывает блок IPv4-конфигурации. */
+  /**
+   * Обрабатывает блок IPv4-конфигурации интерфейса.
+   *
+   * @param i текущий индекс в массиве строк
+   * @param lines все строки вывода команды
+   * @param currentInterface DTO для заполнения
+   * @return новый индекс после обработки блока
+   */
   private static int parseInetBlock(int i, String[] lines, InterfaceDto currentInterface) {
     // Парсинг строки IPv4-адреса
     InterfaceIpv4ConfigDto config = parseIpV4Config(lines[i]);
@@ -251,7 +325,13 @@ public final class IpAParser {
     return i;
   }
 
-  // Парсинг конфигурации IPv4-адреса
+  /**
+   * Парсит конфигурацию IPv4-адреса.
+   *
+   * @param line строка с IPv4-конфигурацией
+   * @return DTO с параметрами IPv4
+   * @see InterfaceIpv4ConfigDto
+   */
   private static InterfaceIpv4ConfigDto parseIpV4Config(String line) {
     Matcher matcher;
     InterfaceIpv4ConfigDto interfaceIpv4Config = new InterfaceIpv4ConfigDto();
@@ -263,13 +343,13 @@ public final class IpAParser {
         matcher = IP_ADDR_AND_PREFIX_PATTERN.matcher(parts[++i]);
         if (matcher.find()) {
           // IPv4-адрес
-          try{
+          try {
             interfaceIpv4Config.setAddress(matcher.group(1));
           } catch (IllegalArgumentException e) {
             interfaceIpv4Config.addUnknownParam(e.getMessage());
           }
           // Префикс
-          try{
+          try {
             interfaceIpv4Config.setPrefix(Integer.parseInt(matcher.group(2)));
           } catch (IllegalArgumentException e) {
             interfaceIpv4Config.addUnknownParam(e.getMessage());
@@ -290,7 +370,7 @@ public final class IpAParser {
       // Парсинг области видимости и NET_DEVICE
       else if (isEqualIgnoreCase(parts[i], SCOPE)) {
         // Область видимости
-        if (IpV4Scope.isValid(parts[i + 1])){
+        if (IpV4Scope.isValid(parts[i + 1])) {
           try {
             interfaceIpv4Config.setScope(
                 IpV4Scope.getIgnoreCase(parts[++i]));
@@ -318,7 +398,14 @@ public final class IpAParser {
     return interfaceIpv4Config;
   }
 
-  /** Обрабатывает блок IPv6-конфигурации. */
+  /**
+   * Обрабатывает блок IPv6-конфигурации интерфейса.
+   *
+   * @param i текущий индекс в массиве строк
+   * @param lines все строки вывода команды
+   * @param currentInterface DTO для заполнения
+   * @return новый индекс после обработки блока
+   */
   private static int parseInet6Block(int i, String[] lines, InterfaceDto currentInterface) {
     // Парсинг строки IPv6-адреса
     InterfaceIpv6ConfigDto config = parseIpV6Config(lines[i]);
@@ -330,7 +417,13 @@ public final class IpAParser {
     return i;
   }
 
-  // Парсинг конфигурации IPv6-адреса
+  /**
+   * Парсит конфигурацию IPv6-адреса.
+   *
+   * @param line строка с IPv6-конфигурацией
+   * @return DTO с параметрами IPv6
+   * @see InterfaceIpv6ConfigDto
+   */
   private static InterfaceIpv6ConfigDto parseIpV6Config(String line) {
     Matcher matcher;
     InterfaceIpv6ConfigDto interfaceIpv6Config = new InterfaceIpv6ConfigDto();
@@ -381,12 +474,25 @@ public final class IpAParser {
     return interfaceIpv6Config;
   }
 
+  /**
+   * Проверяет, является ли строка параметрами времени жизни адреса.
+   *
+   * @param line строка для проверки
+   * @return {@code true} если строка содержит параметры времени жизни,
+   *         {@code false} в противном случае
+   */
   private static boolean isLifetimeLine(String line) {
     return isLineStart(line, VALID_LFT)
         || isLineStart(line, PREFERRED_LFT);
   }
 
-  /** Обрабатывает параметры времени жизни. */
+  /**
+   * Обрабатывает параметры времени жизни IP-адреса.
+   *
+   * @param line строка с параметрами времени жизни
+   * @return DTO с параметрами времени жизни
+   * @see LifeTimeParamsDto
+   */
   private static LifeTimeParamsDto parseLifeTimeParams(String line) {
     LifeTimeParamsDto lifeTimeParams = new LifeTimeParamsDto();
     String[] parts = trimOutputLine(line);

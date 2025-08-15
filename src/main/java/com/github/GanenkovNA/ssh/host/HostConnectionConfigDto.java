@@ -1,46 +1,69 @@
 package com.github.GanenkovNA.ssh.host;
 
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import java.util.Objects;
 
 /**
- * DTO для параметров подключения к SSH-серверу.
- *
- * <p>Содержит обязательные поля для установки соединения:
+ * Data Transfer Object (DTO) для параметров подключения к SSH-серверу.
+ * <p>
+ * Содержит все необходимые параметры для установки SSH-соединения:
  * <ul>
- *   <li>Адрес сервера</li>
- *   <li>Порт (с значением по умолчанию)</li>
- *   <li>Учётные данные пользователя</li>
- * </ul></p>
- *
- * <p><b>Валидация полей:</b>
- * <ul>
- *   <li>{@code host} — не может быть {@code null} или пустым</li>
- *   <li>{@code port} — должен быть в диапазоне 1-65535 (по умолчанию 22)</li>
- *   <li>{@code username} — не может быть {@code null} или пустым</li>
- *   <li>{@code password} — не может быть {@code null}
- *   (может быть пустым, если используется аутентификация по ключу)</li>
+ *   <li><b>host</b> - адрес сервера (IP или доменное имя)</li>
+ *   <li><b>port</b> - номер порта (по умолчанию: 22)</li>
+ *   <li><b>username</b> - имя пользователя для аутентификации</li>
+ *   <li><b>password</b> - пароль пользователя (может быть пустой строкой)</li>
  * </ul>
  *
- * @see jakarta.validation.constraints.Min
- * @see jakarta.validation.constraints.Max
- * @see lombok.NonNull
+ * <p><b>Требования к данным:</b>
+ * <ul>
+ *   <li>Все поля обязательны (кроме порта, который имеет значение по умолчанию)</li>
+ *   <li>Номер порта должен быть в диапазоне 1-65535</li>
+ *   <li>Строковые поля не могут быть null</li>
+ * </ul>
+ *
+ * <p><b>Особенности обработки:</b>
+ * <ul>
+ *   <li>При отсутствии порта (null) используется значение по умолчанию 22</li>
+ *   <li>При указании недопустимого порта генерируется IllegalArgumentException</li>
+ *   <li>Пустой пароль допустим при использовании аутентификации по ключу</li>
+ * </ul>
+ *
+ * @see IllegalArgumentException при недопустимых значениях порта
+ * @see NullPointerException при отсутствии обязательных полей
  */
-@Data
-@NoArgsConstructor
-public class HostConnectionConfigDto {
-  @NonNull
-  private String host;
-  @Min(1)
-  @Max(65535)
-  private int port = 22;
+public record HostConnectionConfigDto(
+    String host,
+    Integer port,
+    String username,
+    String password) {
 
-  // Данные пользователя
-  @NonNull
-  private String username;
-  @NonNull
-  private String password;
+  /**
+   * Создает новый экземпляр DTO для SSH-подключения.
+   *
+   * @param host адрес сервера (не может быть null)
+   * @param port номер порта (1-65535, null для значения по умолчанию 22)
+   * @param username имя пользователя (не может быть null)
+   * @param password пароль (не может быть null, может быть пустым)
+   * @throws IllegalArgumentException если порт вне допустимого диапазона
+   * @throws NullPointerException если обязательные строковые поля null
+   */
+  @JsonCreator
+  public HostConnectionConfigDto(
+      @JsonProperty("host") String host,
+      @JsonProperty("port") Integer port,
+      @JsonProperty("username") String username,
+      @JsonProperty("password") String password
+  ) {
+    this.host = Objects.requireNonNull(host, "Поле `host` не может быть пустым!");
+    this.username = Objects.requireNonNull(username, "Поле `username` не может быть пустым!");
+    this.password = Objects.requireNonNull(password, "Поле `password` не может быть пустым!");
+
+    port = (port == null) ? 22 : port;
+    if (port < 1 || port > 65535) {
+      throw new IllegalArgumentException("Значение SSH-порта должно быть в диапазоне 1-65535!");
+    } else {
+      this.port = port;
+    }
+  }
 }
