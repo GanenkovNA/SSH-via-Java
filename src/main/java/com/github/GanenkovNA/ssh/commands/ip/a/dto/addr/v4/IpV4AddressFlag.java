@@ -84,7 +84,7 @@ public enum IpV4AddressFlag {
   public static boolean isValid(String input) {
     try {
       IpV4AddressFlag.valueOf(
-          StringUtils.normalizeForEnum(input, "", ""));
+          StringUtils.normalizeForEnum(input));
       return true;
     } catch (NullPointerException | IllegalArgumentException e) {
       return false;

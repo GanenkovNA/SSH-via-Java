@@ -136,7 +136,7 @@ public enum QdiscType {
   public static boolean isValid(String input) {
     try {
       QdiscType.valueOf(
-          StringUtils.normalizeForEnum(input, "", ""));
+          StringUtils.normalizeForEnum(input));
       return true;
     } catch (NullPointerException | IllegalArgumentException e) {
       return false;

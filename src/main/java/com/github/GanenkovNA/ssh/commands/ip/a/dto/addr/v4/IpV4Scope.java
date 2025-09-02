@@ -64,7 +64,7 @@ public enum IpV4Scope {
   public static boolean isValid(String input) {
     try {
       IpV4Scope.valueOf(
-          StringUtils.normalizeForEnum(input, "", ""));
+          StringUtils.normalizeForEnum(input));
       return true;
     } catch (NullPointerException | IllegalArgumentException e) {
       return false;

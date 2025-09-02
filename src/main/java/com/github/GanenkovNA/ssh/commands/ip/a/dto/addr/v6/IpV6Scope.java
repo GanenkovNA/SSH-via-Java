@@ -1,7 +1,7 @@
 package com.github.GanenkovNA.ssh.commands.ip.a.dto.addr.v6;
 
+import com.github.GanenkovNA.service.StringUtils;
 import com.github.GanenkovNA.ssh.commands.ip.a.dto.addr.v4.IpV4Scope;
-import java.util.Arrays;
 
 /**
  * Область видимости IPv6-адреса.
@@ -64,11 +64,13 @@ public enum IpV6Scope {
    *         {@code false} если input равен null или значение не найдено
    */
   public static boolean isValid(String input) {
-    if (input == null) {
-      return false;
+    try {
+        IpV6Scope.valueOf(
+                StringUtils.normalizeForEnum(input));
+        return true;
+    } catch (NullPointerException | IllegalArgumentException e) {
+        return false;
     }
-    return Arrays.stream(values())
-        .anyMatch(e -> e.name().equalsIgnoreCase(input));
   }
 
   /**
@@ -80,6 +82,14 @@ public enum IpV6Scope {
    * @throws NullPointerException если input равен null
    */
   public static IpV6Scope getIgnoreCase(String input) {
-    return IpV6Scope.valueOf(input.toUpperCase());
+    input = StringUtils.normalizeForEnum(input,
+            "Значение области видимости IPv6-адреса не может быть null",
+            "Значение области видимости IPv6-адреса не может быть пустым");
+
+    try {
+        return IpV6Scope.valueOf(input);
+    } catch (IllegalArgumentException e) {
+        throw new IllegalArgumentException("Значение области видимости IPv6-адреса не найдено: " + input);
+    }
   }
 }

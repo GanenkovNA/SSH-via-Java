@@ -74,7 +74,7 @@ public enum InterfaceState {
   public static boolean isValid(String input) {
     try {
       InterfaceState.valueOf(
-          StringUtils.normalizeForEnum(input, "", ""));
+          StringUtils.normalizeForEnum(input));
       return true;
     } catch (NullPointerException | IllegalArgumentException e) {
       return false;

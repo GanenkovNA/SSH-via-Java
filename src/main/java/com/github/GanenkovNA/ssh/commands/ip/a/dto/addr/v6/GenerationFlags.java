@@ -57,7 +57,7 @@ public enum GenerationFlags {
   public static boolean isValid(String input) {
     try {
       GenerationFlags.valueOf(
-          StringUtils.normalizeForEnum(input, "", ""));
+          StringUtils.normalizeForEnum(input));
       return true;
     } catch (NullPointerException | IllegalArgumentException e) {
       return false;
@@ -90,7 +90,7 @@ public enum GenerationFlags {
     try {
       return GenerationFlags.valueOf(input);
     } catch (IllegalArgumentException e) {
-      throw new RuntimeException("Значение флага генерации IPv6 не найдено: " + input);
+      throw new IllegalArgumentException("Значение флага генерации IPv6 не найдено: " + input);
     }
   }
 }

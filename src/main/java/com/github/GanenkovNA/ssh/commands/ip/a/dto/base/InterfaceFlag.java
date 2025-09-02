@@ -124,7 +124,7 @@ public enum InterfaceFlag {
   public static boolean isValid(String input) {
     try {
       InterfaceFlag.valueOf(
-          StringUtils.normalizeForEnum(input, "", ""));
+          StringUtils.normalizeForEnum(input));
       return true;
     } catch (NullPointerException | IllegalArgumentException e) {
       return false;
