@@ -1,5 +1,6 @@
 package com.github.GanenkovNA.ssh.commands.ip.service;
 
+import java.util.Objects;
 import java.util.regex.Pattern;
 
 /**
@@ -13,25 +14,28 @@ import java.util.regex.Pattern;
  * </ul>
  */
 public final class MacValidation {
-  // Регулярное выражение для стандартных форматов MAC
+  // Регулярное выражение для популярных форматов MAC.
+  // 1) Один тип разделителя на весь адрес (':' ИЛИ '-'), через back-reference.
+  // 2) Cisco-стиль с точками.
+  // 3) Без разделителей (12 hex-символов).
   private static final Pattern MAC_PATTERN = Pattern.compile(
-      "^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$"  // С разделителями `:` или `-`
-          + "|^([0-9A-Fa-f]{4}\\.[0-9A-Fa-f]{4}\\.[0-9A-Fa-f]{4})$"  // С точками (Cisco)
-          + "|^([0-9A-Fa-f]{12})$"  // Без разделителей
-  );
+      "^(?:[0-9A-Fa-f]{2}([:-])[0-9A-Fa-f]{2}(?:\\1[0-9A-Fa-f]{2}){4})$"
+          + "|^(?:[0-9A-Fa-f]{4}\\.[0-9A-Fa-f]{4}\\.[0-9A-Fa-f]{4})$"
+          + "|^(?:[0-9A-Fa-f]{12})$");
 
   /**
    * Проверяет корректность MAC-адреса.
    *
-   * @param mac адрес для проверки
-   * @throws IllegalArgumentException если mac не соответствует формату
+   * @param mac адрес для проверки; не может быть {@code null}
+   * @return {@code true}, если адрес корректен
+   * @throws NullPointerException если {@code mac == null}
+   * @throws IllegalArgumentException если адрес не соответствует поддерживаемым форматам
    */
-  public static boolean validateMac(String mac)
-      throws IllegalArgumentException {
+  public static boolean validateMac(String mac) {
+    Objects.requireNonNull(mac, "MAC-адрес не может быть null");
     if (MAC_PATTERN.matcher(mac).matches()) {
       return true;
-    } else {
-      throw new IllegalArgumentException("Неверный формат MAC-адреса: " + mac);
     }
+    throw new IllegalArgumentException("Неверный формат MAC-адреса: " + mac);
   }
 }

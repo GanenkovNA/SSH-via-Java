@@ -74,8 +74,7 @@ public class StringUtils {
      * // → "GLOBAL"
      * }</pre>
      */
-  public static String normalizeForEnum(String input, String nullErrorMessage, String emptyErrorMessage)
-          throws NullPointerException, IllegalArgumentException {
+  public static String normalizeForEnum(String input, String nullErrorMessage, String emptyErrorMessage) {
       Objects.requireNonNull(input, nullErrorMessage);
       input = input.trim();
       if (input.isEmpty()) {
@@ -98,8 +97,7 @@ public class StringUtils {
      * @see #normalizeForEnum(String, String, String)
      * @see Enum#valueOf(Class, String)
      */
-  public static String normalizeForEnum(String input)
-          throws NullPointerException, IllegalArgumentException {
+  public static String normalizeForEnum(String input) {
       Objects.requireNonNull(input, "Строка не может быть null");
       input = input.trim();
       if (input.isEmpty()) {
