@@ -462,7 +462,7 @@ public final class IpAParser {
             GenerationFlags.getIgnoreCase(parts[i]));
       }
       // Парсинг флага маршрутизации
-      else if (RouteFlags.contains(parts[i])) {
+      else if (RouteFlags.isValid(parts[i])) {
         interfaceIpv6Config.addRouteFlag(
             RouteFlags.getIgnoreCase(parts[i]));
       }

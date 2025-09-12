@@ -4,7 +4,7 @@ import com.github.GanenkovNA.service.StringUtils;
 
 /** Хранит возможные флаги, установленные в интерфейсе.
  *
- *  <p>Соответствуют флагам ядра Linux (IFF_* в <linux/if.h>).
+ * <p>Соответствуют флагам ядра Linux ({@code IFF_*} в {@code <linux/if.h>}).</p>
  *
  * @see <a href="https://man7.org/linux/man-pages/man7/netdevice.7.html">netdevice(7)</a>
  * @see <a href="https://www.kernel.org/doc/html/latest/networking/operstates.html">Состояния интерфейсов</a>
@@ -73,14 +73,17 @@ public enum InterfaceFlag {
 
   /**
    * Драйвер активен (флаг IFF_RUNNING).
-   * Отличается от UP (может быть RUNNING без UP).
+   * Отличается от UP (может быть RUNNING без UP). В современных выводах iproute2 чаще ориентируются на {@link #LOWER_UP}.
    */
   RUNNING,
 
   /**
-   * Нет несущего сигнала (флаг !IFF_LOWER_UP).
-   * Пример: отключённый Ethernet-кабель.
+   * Нет несущего сигнала.
+   * <p><b>Не является</b> флагом {@code IFF_*}; это операционное состояние,
+   * которое отображается как {@code NO-CARRIER} в выводе {@code ip link} при отсутствии carrier.</p>
+   * @deprecated Не относится к {@code IFF_*}. Используйте {@link #LOWER_UP} для признака линка.
    */
+  @Deprecated
   NO_CARRIER,
 
   /**
@@ -98,28 +101,15 @@ public enum InterfaceFlag {
   /**
    * Проверяет существование указанного флага интерфейса.
    *
-   * <p><b>Нормализация имени:</b></p>
-   * <ul>
-   *   <li>Приведение к верхнему регистру</li>
-   *   <li>Замена тире на подчёркивания</li>
-   *   <li>Удаление пробелов по краям</li>
-   * </ul>
+   * <p>Перед проверкой выполняется нормализация в {@link StringUtils#normalizeForEnum(String)}.</p>
    *
-   * @param input название флага (может быть null)
-   * @return true если флаг существует, false если:
-   *         <ul>
-   *           <li>input == null</li>
-   *           <li>строка пустая</li>
-   *           <li>флаг не найден</li>
-   *         </ul>
+   * <p>Возвращает {@code true}, если после нормализации значение найдено;
+   * возвращает {@code false}, если {@code input == null}, строка пустая после trim()
+   * или такого флага не существует.</p>
    *
-   * @implNote Примеры:
-   * <ul>
-   *   <li>isValid("up") → true</li>
-   *   <li>isValid("loopback") → true</li>
-   *   <li>isValid("no-carrier") → true (преобразуется в NO_CARRIER)</li>
-   * </ul>
-   *   <li>getIgnoreCase("POINTOPOINT") → InterfaceFlag.POINTOPOINT</li>
+   * @param input название флага интерфейса (может быть {@code null})
+   * @return {@code true}, если флаг интерфейса существует; иначе {@code false}
+   * @see StringUtils#normalizeForEnum(String)
    */
   public static boolean isValid(String input) {
     try {
@@ -132,32 +122,17 @@ public enum InterfaceFlag {
   }
 
   /**
-   * Возвращает флаг интерфейса по имени (без учёта регистра).
+   * Возвращает флаг интерфейса по имени, игнорируя регистр и дефисы.
    *
-   * <p><b>Требования к имени:</b></p>
-   * <ol>
-   *   <li>Не может быть null</li>
-   *   <li>Не может быть пустой строкой</li>
-   *   <li>Должно соответствовать одному из значений перечисления</li>
-   * </ol>
+   * <p>Нормализация идентична {@link StringUtils#normalizeForEnum(String)}.</p>
    *
-   * @param input название флага
-   * @return соответствующий флаг интерфейса
-   * @throws NullPointerException если input == null
-   * @throws IllegalArgumentException если:
-   *         <ul>
-   *           <li>строка пустая после trim()</li>
-   *           <li>флаг не найден</li>
-   *         </ul>
-   *
-   * @implNote Примеры:
-   * <ul>
-   *   <li>getIgnoreCase("up") → InterfaceFlag.UP</li>
-   *   <li>getIgnoreCase("NO-CARRIER") → InterfaceFlag.NO_CARRIER</li>
-   * </ul>
+   * @param input название флага интерфейса; не может быть {@code null} или пустым
+   * @return соответствующий элемент перечисления
+   * @throws NullPointerException если {@code input == null}
+   * @throws IllegalArgumentException если строка пуста после trim() или значение не найдено
+   * @see StringUtils#normalizeForEnum(String, String, String)
    */
-  public static InterfaceFlag getIgnoreCase(String input)
-      throws IllegalArgumentException, NullPointerException {
+  public static InterfaceFlag getIgnoreCase(String input) {
     input = StringUtils.normalizeForEnum(input,
         "Значение флага интерфейса не может быть null",
         "Значение флага интерфейса не может быть пустым");
@@ -165,7 +140,7 @@ public enum InterfaceFlag {
     try {
       return InterfaceFlag.valueOf(input);
     } catch (IllegalArgumentException e) {
-      throw new RuntimeException("Значение флага интерфейса не найдено: " + input);
+      throw new IllegalArgumentException("Значение флага интерфейса не найдено: " + input);
     }
   }
 }

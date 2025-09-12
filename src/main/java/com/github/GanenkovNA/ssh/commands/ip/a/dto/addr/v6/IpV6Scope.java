@@ -1,13 +1,18 @@
 package com.github.GanenkovNA.ssh.commands.ip.a.dto.addr.v6;
 
 import com.github.GanenkovNA.service.StringUtils;
-import com.github.GanenkovNA.ssh.commands.ip.a.dto.addr.v4.IpV4Scope;
 
 /**
- * Область видимости IPv6-адреса.
+ * Область видимости и флаги состояния IPv6-адреса (как в выводе {@code ip -6 addr}).
  *
- * <p>Определяет, где действителен адрес (локально, глобально и т.д.). Аналогичен {@link IpV4Scope},
- * но с дополнительными IPv6-специфичными значениями (RFC 4007).
+ * <p>Содержит как значения "scope" по RFC 4007 (GLOBAL, LINK, HOST, SITE),
+ * так и практические флаги адресов, которые выводит iproute2
+ * ({@code dynamic}, {@code mngtmpaddr}, {@code deprecated}, {@code tentative}, и т.д.).</p>
+ *
+ * <p>Таким образом, перечисление совмещает стандартные области видимости и
+ * дополнительные статусные метки адреса для удобства парсинга.</p>
+ *
+ * @implNote Флаги появляются сразу после блока {@code scope ...} в выводе iproute2.
  */
 public enum IpV6Scope {
   /** Глобальная маршрутизация (интернет). */
@@ -28,11 +33,11 @@ public enum IpV6Scope {
   SITE,
 
   /**
-   * Устаревшее значение (полная маршрутизация).
+   * Значение из старых версий iproute2, больше не используется для IPv6-адресов.
    *
    * @deprecated заменен на {@link #GLOBAL} в современных реализациях
    */
-  @Deprecated
+  @Deprecated(since = "legacy IPv6 scopes (pre-RFC 4007)")
   UNIVERSE,
 
   /** Временный адрес для автоматической конфигурации. */
@@ -57,11 +62,17 @@ public enum IpV6Scope {
   DYNAMIC;
 
   /**
-   * Проверяет наличие значения в перечислении по имени (без учета регистра).
+   * Проверяет существование указанной области видимости IPv6.
    *
-   * @param input значение для проверки (может быть null)
-   * @return {@code true} если перечисление содержит значение с указанным именем,
-   *         {@code false} если input равен null или значение не найдено
+   * <p>Перед проверкой выполняется нормализация в {@link StringUtils#normalizeForEnum(String)}.</p>
+   *
+   * <p>Возвращает {@code true}, если после нормализации значение найдено;
+   * возвращает {@code false}, если {@code input == null}, строка пустая после trim()
+   * или такой области не существует.</p>
+   *
+   * @param input название области видимости (может быть {@code null})
+   * @return {@code true}, если область существует; иначе {@code false}
+   * @see StringUtils#normalizeForEnum(String)
    */
   public static boolean isValid(String input) {
     try {
@@ -74,12 +85,15 @@ public enum IpV6Scope {
   }
 
   /**
-   * Возвращает элемент перечисления по имени без учета регистра.
+   * Возвращает элемент перечисления по имени, игнорируя регистр и дефисы.
    *
-   * @param input имя значения (без учета регистра)
+   * <p>Нормализация идентична {@link StringUtils#normalizeForEnum(String)}.</p>
+   *
+   * @param input название области видимости; не может быть {@code null} или пустым
    * @return соответствующий элемент перечисления
-   * @throws IllegalArgumentException если элемент с указанным именем не существует
-   * @throws NullPointerException если input равен null
+   * @throws NullPointerException если {@code input == null}
+   * @throws IllegalArgumentException если строка пуста после trim() или значение не найдено
+   * @see StringUtils#normalizeForEnum(String, String, String)
    */
   public static IpV6Scope getIgnoreCase(String input) {
     input = StringUtils.normalizeForEnum(input,

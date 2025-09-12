@@ -39,27 +39,15 @@ public enum IpV4Scope {
   /**
    * Проверяет существование указанной области видимости IPv4.
    *
-   * <p><b>Нормализация имени:</b></p>
-   * <ul>
-   *   <li>Приведение к верхнему регистру</li>
-   *   <li>Замена тире на подчёркивания</li>
-   *   <li>Удаление пробелов по краям</li>
-   * </ul>
+   * <p>Перед проверкой выполняется нормализация в {@link StringUtils#normalizeForEnum(String)}.</p>
    *
-   * @param input название области видимости (может быть null)
-   * @return true если область существует, false если:
-   *         <ul>
-   *           <li>input == null</li>
-   *           <li>строка пустая</li>
-   *           <li>область не найдена</li>
-   *         </ul>
+   * <p>Возвращает {@code true}, если после нормализации значение найдено;
+   * возвращает {@code false}, если {@code input == null}, строка пустая после trim()
+   * или такой области не существует.</p>
    *
-   * @implNote Примеры:
-   * <ul>
-   *   <li>isValid("global") → true</li>
-   *   <li>isValid("link-local") → true (преобразуется в LINK)</li>
-   *   <li>isValid("invalid") → false</li>
-   * </ul>
+   * @param input название области видимости (может быть {@code null})
+   * @return {@code true}, если область существует; иначе {@code false}
+   * @see StringUtils#normalizeForEnum(String)
    */
   public static boolean isValid(String input) {
     try {
@@ -72,32 +60,17 @@ public enum IpV4Scope {
   }
 
   /**
-   * Проверяет существование указанной области видимости IPv4.
+   * Возвращает элемент перечисления по имени, игнорируя регистр и дефисы.
    *
-   * <p><b>Нормализация имени:</b></p>
-   * <ul>
-   *   <li>Приведение к верхнему регистру</li>
-   *   <li>Замена тире на подчёркивания</li>
-   *   <li>Удаление пробелов по краям</li>
-   * </ul>
+   * <p>Нормализация идентична {@link StringUtils#normalizeForEnum(String)}.</p>
    *
-   * @param input название области видимости (может быть null)
-   * @return true если область существует, false если:
-   *         <ul>
-   *           <li>input == null</li>
-   *           <li>строка пустая</li>
-   *           <li>область не найдена</li>
-   *         </ul>
-   *
-   * @implNote Примеры:
-   * <ul>
-   *   <li>isValid("global") → true</li>
-   *   <li>isValid("link-local") → true (преобразуется в LINK)</li>
-   *   <li>isValid("invalid") → false</li>
-   * </ul>
+   * @param input название области видимости; не может быть {@code null} или пустым
+   * @return соответствующий элемент перечисления
+   * @throws NullPointerException если {@code input == null}
+   * @throws IllegalArgumentException если строка пуста после trim() или значение не найдено
+   * @see StringUtils#normalizeForEnum(String, String, String)
    */
-  public static IpV4Scope getIgnoreCase(String input)
-      throws IllegalArgumentException, NullPointerException {
+  public static IpV4Scope getIgnoreCase(String input) {
     input = StringUtils.normalizeForEnum(input,
         "Значение области видимости IPv4 не может быть null",
         "Значение области видимости IPv4 не может быть пустым");
@@ -105,7 +78,7 @@ public enum IpV4Scope {
     try {
       return IpV4Scope.valueOf(input);
     } catch (IllegalArgumentException e) {
-      throw new RuntimeException("Значение области видимости IPv4 не найдено: " + input);
+      throw new IllegalArgumentException("Значение области видимости IPv4 не найдено: " + input);
     }
   }
 }

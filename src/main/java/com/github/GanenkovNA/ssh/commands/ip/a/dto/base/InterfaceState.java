@@ -3,10 +3,10 @@ package com.github.GanenkovNA.ssh.commands.ip.a.dto.base;
 import com.github.GanenkovNA.service.StringUtils;
 
 /**
- * Состояние сетевого интерфейса из вывода `ip link`.
+ * Состояние сетевого интерфейса из вывода {@code ip link}.
  *
- * <p>Соответствует полю `state` в выводе команды `ip a`.
- * Отражают различные состояния интерфейса на канальном (L2) и сетевом (L3) уровнях.
+ * <p>Соответствует полю {@code state} в выводе команды {@code ip a}.
+ * Отражает различные состояния интерфейса на канальном (L2) и сетевом (L3) уровнях.</p>
  *
  * @see <a href="https://man7.org/linux/man-pages/man8/ip-link.8.html">Документация ip-link(8)</a>
  * @see <a href="https://www.kernel.org/doc/html/latest/networking/operstates.html">Kernel Networking Operstates</a>
@@ -27,15 +27,11 @@ public enum InterfaceState {
   UNKNOWN,
 
   /** Физический уровень активен (кабель подключён, флаг {@code IFF_LOWER_UP}).
-   *
-   * <p>Соответствует статусу {@code NO-CARRIER} в Ethernet-интерфейсах.
    */
   LOWER_UP,
 
   /**
    * Нет соединения на физическом уровне (кабель отключён).
-   *
-   * <p>Соответствует статусу {@code NO-CARRIER} в Ethernet-интерфейсах.
    */
   NO_CARRIER,
 
@@ -47,29 +43,17 @@ public enum InterfaceState {
   DORMANT;
 
   /**
-   * Проверяет существование указанного состояния интерфейса в перечислении.
+   * Проверяет существование указанного состояния интерфейса.
    *
-   * <p><b>Нормализация имени:</b></p>
-   * <ul>
-   *   <li>Приведение к верхнему регистру</li>
-   *   <li>Замена тире на подчёркивания</li>
-   *   <li>Удаление пробелов по краям</li>
-   * </ul>
+   * <p>Перед проверкой выполняется нормализация в {@link StringUtils#normalizeForEnum(String)}.</p>
    *
-   * @param input название состояния (может быть null)
-   * @return true если состояние существует, false если:
-   *         <ul>
-   *           <li>input == null</li>
-   *           <li>строка пустая</li>
-   *           <li>состояние не найдено</li>
-   *         </ul>
+   * <p>Возвращает {@code true}, если после нормализации значение найдено;
+   * возвращает {@code false}, если {@code input == null}, строка пустая после trim()
+   * или такого состояния не существует.</p>
    *
-   * @implNote Примеры:
-   * <ul>
-   *   <li>isValid("up") → true</li>
-   *   <li>isValid("admin_down") → true</li>
-   *   <li>isValid(null) → false</li>
-   * </ul>
+   * @param input название состояния (может быть {@code null})
+   * @return {@code true}, если состояние существует; иначе {@code false}
+   * @see StringUtils#normalizeForEnum(String)
    */
   public static boolean isValid(String input) {
     try {
@@ -82,32 +66,17 @@ public enum InterfaceState {
   }
 
   /**
-   * Возвращает состояние интерфейса по имени (без учёта регистра).
+   * Возвращает элемент перечисления по имени, игнорируя регистр и дефисы.
    *
-   * <p><b>Требования к имени:</b></p>
-   * <ol>
-   *   <li>Не может быть null</li>
-   *   <li>Не может быть пустой строкой</li>
-   *   <li>Должно соответствовать одному из значений перечисления</li>
-   * </ol>
+   * <p>Нормализация идентична {@link StringUtils#normalizeForEnum(String)}.</p>
    *
-   * @param input название состояния
-   * @return соответствующее состояние интерфейса
-   * @throws NullPointerException если input == null
-   * @throws IllegalArgumentException если:
-   *         <ul>
-   *           <li>строка пустая после trim()</li>
-   *           <li>состояние не найдено</li>
-   *         </ul>
-   *
-   * @implNote Примеры:
-   * <ul>
-   *   <li>getIgnoreCase("up") → InterfaceState.UP</li>
-   *   <li>getIgnoreCase("LOWER-UP") → InterfaceState.LOWER_UP</li>
-   * </ul>
+   * @param input название состояния интерфейса; не может быть {@code null} или пустым
+   * @return соответствующий элемент перечисления
+   * @throws NullPointerException если {@code input == null}
+   * @throws IllegalArgumentException если строка пуста после trim() или значение не найдено
+   * @see StringUtils#normalizeForEnum(String, String, String)
    */
-  public static InterfaceState getIgnoreCase(String input)
-      throws IllegalArgumentException, NullPointerException {
+  public static InterfaceState getIgnoreCase(String input) {
     input = StringUtils.normalizeForEnum(input,
         "Значение состояния интерфейса не может быть null",
         "Значение состояния интерфейса не может быть пустым");
@@ -115,7 +84,7 @@ public enum InterfaceState {
     try {
       return InterfaceState.valueOf(input);
     } catch (IllegalArgumentException e) {
-      throw new RuntimeException("Значение состояния интерфейса не найдено: " + input);
+      throw new IllegalArgumentException("Значение состояния интерфейса не найдено: " + input);
     }
   }
 }

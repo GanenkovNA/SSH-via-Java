@@ -3,10 +3,10 @@ package com.github.GanenkovNA.ssh.commands.ip.a.dto.addr.v6;
 import com.github.GanenkovNA.service.StringUtils;
 
 /**
- * Флаги маршрутизации, используемые для управления поведением сетевых интерфейсов при работе с IPv6
- * адресами и маршрутами.
+ * Флаги конфигурации/маршрутизации из вывода {@code ip -6 addr} для IPv6-адресов.
  *
- * <p>Определяет специальные параметры обработки маршрутов и адресов.
+ * <p>Используются iproute2 для указания особенностей обработки адресов и связанных с ними маршрутов
+ * (например, {@code noprefixroute}, {@code nodad}, {@code optimistic}, {@code autoconf}).</p>
  */
 public enum RouteFlags {
 
@@ -36,13 +36,19 @@ public enum RouteFlags {
   AUTOCONF;
 
   /**
-   * Проверяет наличие значения в перечислении по имени (без учета регистра).
+   * Проверяет существование флага маршрутизации.
    *
-   * @param input имя значения для проверки (может быть null)
-   * @return {@code true} если перечисление содержит значение с указанным именем, {@code false} если
-   * input равен null или значение не найдено
+   * <p>Перед проверкой выполняется нормализация в {@link StringUtils#normalizeForEnum(String)}.</p>
+   *
+   * <p>Возвращает {@code true}, если после нормализации значение найдено;
+   * возвращает {@code false}, если {@code input == null}, строка пустая после trim()
+   * или такого флага не существует.</p>
+   *
+   * @param input название флага маршрутизации (может быть {@code null})
+   * @return {@code true}, если флаг существует; иначе {@code false}
+   * @see StringUtils#normalizeForEnum(String)
    */
-  public static boolean contains(String input) {
+  public static boolean isValid(String input) {
     try {
       RouteFlags.valueOf(
           StringUtils.normalizeForEnum(input));
@@ -53,12 +59,15 @@ public enum RouteFlags {
   }
 
   /**
-   * Возвращает элемент перечисления по имени без учета регистра.
+   * Возвращает элемент перечисления по имени, игнорируя регистр и дефисы.
    *
-   * @param input имя значения (без учета регистра)
+   * <p>Нормализация идентична {@link StringUtils#normalizeForEnum(String)}.</p>
+   *
+   * @param input название флага маршрутизации; не может быть {@code null} или пустым
    * @return соответствующий элемент перечисления
-   * @throws IllegalArgumentException если элемент с указанным именем не существует
-   * @throws NullPointerException     если input равен null
+   * @throws NullPointerException если {@code input == null}
+   * @throws IllegalArgumentException если строка пуста после trim() или значение не найдено
+   * @see StringUtils#normalizeForEnum(String, String, String)
    */
   public static RouteFlags getIgnoreCase(String input) {
     input = StringUtils.normalizeForEnum(input,

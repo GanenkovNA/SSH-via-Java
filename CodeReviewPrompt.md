@@ -95,11 +95,11 @@
    -  Цель: выровнять API нормализации/валидации, чтобы дальше не спорить с DTO/enum.
 
 2. **Enum-слой (контракты isValid/getIgnoreCase)**
-   - [ ] Базовые состояния/типы:
+   - [x] Базовые состояния/типы:
       `dto.base.InterfaceState`, `dto.base.InterfaceFlag`*, `dto.base.QdiscType`*
       (\*если в репо)
-   - [ ] IPv4: `dto.addr.v4.IpV4Scope`, `dto.addr.v4.IpV4AddressFlag`
-   - [ ] IPv6: `dto.addr.v6.IpV6Scope`, `dto.addr.v6.GenerationFlags`, `dto.addr.v6.RouteFlags`
+   - [x] IPv4: `dto.addr.v4.IpV4Scope`, `dto.addr.v4.IpV4AddressFlag`
+   - [x] IPv6: `dto.addr.v6.IpV6Scope`, `dto.addr.v6.GenerationFlags`, `dto.addr.v6.RouteFlags`
    -  Что проверяем: единый паттерн нормализации (через новую `normalizeForEnum(input)`), `isValid` не бросает исключения, `getIgnoreCase` бросает NPE/IAE по контракту, JavaDoc по шаблону.
 
 3. **DTO-ядро (инварианты и ошибки)**

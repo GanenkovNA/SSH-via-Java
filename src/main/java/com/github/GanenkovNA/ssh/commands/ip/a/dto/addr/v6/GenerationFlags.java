@@ -5,8 +5,14 @@ import com.github.GanenkovNA.service.StringUtils;
 /**
  * Флаги, указывающие способ генерации IPv6-адреса.
  *
- * <p>Определяют, каким методом был создан адрес/
- * Соответствуют RFC 4291 (EUI-64), 4941 (временные адреса) и 7217 (стабильные приватные адреса).
+ * <p></p>Флаги, указывающие способ генерации IPv6-адреса (как в выводе {@code ip -6 addr}).</p>
+ *
+ * <p>Определяют, каким методом был создан адрес. Соответствуют:
+ * <ul>
+ *   <li>RFC 4291 — EUI-64</li>
+ *   <li>RFC 4941 — временные адреса</li>
+ *   <li>RFC 7217 — стабильные приватные адреса</li>
+ * </ul>
  */
 public enum GenerationFlags {
 
@@ -37,22 +43,17 @@ public enum GenerationFlags {
   MANUAL;
 
   /**
-   * Проверяет, является ли строка допустимым значением флага генерации IPv6.
+   * Проверяет валидность строкового представления флага генерации IPv6.
    *
-   * <p>Метод выполняет нормализацию входной строки:
-   * <ol>
-   *   <li>Приводит к верхнему регистру</li>
-   *   <li>Удаляет лишние пробелы</li>
-   *   <li>Заменяет специальные символы</li>
-   * </ol>
+   * <p>Перед проверкой выполняется нормализация в {@link StringUtils#normalizeForEnum(String)}.</p>
    *
-   * @param input строка для проверки (может быть null)
-   * @return true если строка соответствует одному из значений enum после нормализации,
-   *         false если:
-   *         - input == null
-   *         - input пустая строка
-   *         - значение не найдено
-   * @see StringUtils#normalizeForEnum
+   * <p>Возвращает {@code true}, если после нормализации значение найдено;
+   * возвращает {@code false}, если {@code input == null}, строка пустая после trim()
+   * или такой области не существует.</p>
+   *
+   * @param input название флага генерации (может быть {@code null})
+   * @return {@code true}, если значение найдено; иначе {@code false}
+   * @see StringUtils#normalizeForEnum(String)
    */
   public static boolean isValid(String input) {
     try {
@@ -65,24 +66,17 @@ public enum GenerationFlags {
   }
 
   /**
-   * Возвращает элемент enum по строковому представлению (без учета регистра).
+   * Возвращает элемент перечисления по имени, игнорируя регистр и дефисы.
    *
-   * <p>Перед поиском выполняет нормализацию строки:
-   * <ol>
-   *   <li>Проверяет на null и пустую строку</li>
-   *   <li>Приводит к верхнему регистру</li>
-   *   <li>Удаляет лишние пробелы и специальные символы</li>
-   * </ol>
+   * <p>Нормализация идентична {@link StringUtils#normalizeForEnum(String)}.</p>
    *
    * @param input название флага генерации (без учета регистра)
-   * @return соответствующий элемент enum
-   * @throws NullPointerException если input == null
-   * @throws IllegalArgumentException если input пустая строка
-   * @throws RuntimeException если значение не найдено после нормализации
-   * @see StringUtils#normalizeForEnum
+   * @return соответствующий элемент перечисления
+   * @throws NullPointerException если {@code input == null}
+   * @throws IllegalArgumentException если строка пуста после trim() или значение не найдено
+   * @see StringUtils#normalizeForEnum(String, String, String)
    */
-  public static GenerationFlags getIgnoreCase(String input)
-      throws IllegalArgumentException, NullPointerException {
+  public static GenerationFlags getIgnoreCase(String input) {
     input = StringUtils.normalizeForEnum(input,
         "Значение флага генерации IPv6 не может быть null",
         "Значение флага генерации IPv6 не может быть пустым");

@@ -10,76 +10,71 @@ public enum IpV4AddressFlag {
   /**
    * Адрес получен динамически (DHCP, SLAAC, etc).
    *
-   * <p>Пример: `inet 192.168.1.100/24 ... dynamic`</p>
+   * <p>Пример: {@code inet 192.168.1.100/24 ... dynamic}</p>
    */
   DYNAMIC,
 
   /**
    * Ядро не создало автоматический маршрут для подсети.
    *
-   * <p>Пример: `inet 172.20.15.37/21 ... noprefixroute`</p>
+   * <p>Пример: {@code inet 172.20.15.37/21 ... noprefixroute}</p>
    */
   NOPREFIXROUTE,
 
   /**
    * Дополнительный (вторичный) адрес на интерфейсе.
    *
-   * <p>Пример: `inet 192.168.1.200/24 ... secondary`</p>
+   * <p>Пример: {@code inet 192.168.1.200/24 ... secondary}</p>
    */
   SECONDARY,
 
   /**
    * Адрес в процессе проверки на дублирование (DAD).
    *
-   * <p>Пример: `inet 192.168.1.100/24 ... tentative`</p>
+   * <p>Пример: {@code inet 192.168.1.100/24 ... tentative}</p>
    */
   TENTATIVE,
 
   /**
    * Адрес устарел (не рекомендуется для новых соединений).
    *
-   * <p>Пример: `inet 192.168.1.100/24 ... deprecated`</p>
+   * <p>Пример: {@code inet 192.168.1.100/24 ... deprecated}</p>
    */
   DEPRECATED,
 
   /**
    * Обнаружен конфликт адресов (DAD failed).
    *
-   * <p>Пример: `inet 192.168.1.100/24 ... dadfailed`</p>
+   * <p>Пример: {@code inet 192.168.1.100/24 ... dadfailed}</p>
    */
   DADFAILED,
 
   /**
    * Адрес закреплён статически (не удаляется автоматически).
    *
-   * <p>Пример: `inet 192.168.1.100/24 ... permanent`</p>
+   * <p>Пример: {@code inet 192.168.1.100/24 ... permanent}</p>
    */
   PERMANENT,
 
   /**
    * Временный адрес (например, для приватности).
    *
-   * <p>Пример: `inet 192.168.1.100/24 ... mngtmpaddr`</p>
+   * <p>Пример: {@code inet 192.168.1.100/24 ... mngtmpaddr}</p>
    */
   MNGTMPADDR;
 
   /**
    * Проверяет валидность строкового представления флага IPv4.
    *
-   * <p>Метод выполняет нормализацию строки перед проверкой:
-   * <ul>
-   *   <li>Удаляет лишние пробелы</li>
-   *   <li>Приводит к верхнему регистру</li>
-   *   <li>Заменяет спецсимволы</li>
-   * </ul>
+   * <p>Перед проверкой выполняется нормализация в {@link StringUtils#normalizeForEnum(String)}.</p>
+   *
+   * <p>Возвращает {@code true}, если после нормализации значение найдено;
+   * возвращает {@code false}, если {@code input == null}, строка пустая после trim()
+   * или такой области не существует.</p>
    *
    * @param input строка для проверки (может быть null)
-   * @return true если строка соответствует одному из значений enum,
-   *         false если:
-   *         - передан null
-   *         - строка пустая
-   *         - значение не найдено
-   * @see StringUtils#normalizeForEnum
+   * @return {@code true}, если строка соответствует одному из значений перечисления; иначе {@code false}
+   * @see StringUtils#normalizeForEnum(String)
    */
   public static boolean isValid(String input) {
     try {
@@ -92,26 +87,17 @@ public enum IpV4AddressFlag {
   }
 
   /**
-   * Возвращает элемент enum по строковому представлению (без учета регистра).
+   * Возвращает элемент перечисления по строковому представлению (без учёта регистра и с заменой '-'→'_').
    *
-   * <p>Перед поиском выполняет нормализацию строки:
-   * <ol>
-   *   <li>Проверяет на null и пустую строку</li>
-   *   <li>Приводит к верхнему регистру</li>
-   *   <li>Удаляет лишние пробелы и спецсимволы</li>
-   * </ol>
+   * <p>Нормализация идентична {@link StringUtils#normalizeForEnum(String)}.</p>
    *
-   * @param input строка для поиска (должна соответствовать имени элемента enum)
-   * @return соответствующий элемент enum
-   * @throws NullPointerException если input равен null
-   * @throws IllegalArgumentException если:
-   *         - input пустая строка
-   *         - элемент не найден после нормализации
-   * @throws RuntimeException если нормализованная строка не соответствует ни одному элементу enum
+   * @param input строка для поиска; не может быть {@code null} или пустой
+   * @return соответствующий элемент перечисления
+   * @throws NullPointerException если {@code input == null}
+   * @throws IllegalArgumentException если строка пустая после trim() или значение не найдено
    * @see StringUtils#normalizeForEnum(String, String, String)
    */
-  public static IpV4AddressFlag getIgnoreCase(String input)
-      throws IllegalArgumentException, NullPointerException {
+  public static IpV4AddressFlag getIgnoreCase(String input) {
     input = StringUtils.normalizeForEnum(input,
         "Значение флага состояния IPv4 не может быть null",
         "Значение флага состояния IPv4 не может быть пустым");
@@ -119,7 +105,7 @@ public enum IpV4AddressFlag {
     try {
       return IpV4AddressFlag.valueOf(input);
     } catch (IllegalArgumentException e) {
-      throw new RuntimeException("Значение флага состояния IPv4 не найдено: " + input);
+      throw new IllegalArgumentException("Значение флага состояния IPv4 не найдено: " + input);
     }
   }
 }

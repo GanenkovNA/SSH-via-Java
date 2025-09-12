@@ -6,18 +6,18 @@ import com.github.GanenkovNA.service.StringUtils;
  * Перечисление всех возможных типов дисциплин очередей (qdisc) в Linux.
  *
  * <p>QDisc (Queueing Discipline) определяет алгоритм управления сетевыми пакетами
- * на уровне интерфейса.
+ * на уровне интерфейса.</p>
  *
  * @see <a href="https://man7.org/linux/man-pages/man8/tc.8.html">Документация tc(8)</a>
  * @see <a href="https://tldp.org/HOWTO/Traffic-Control-HOWTO/components.html">Traffic Control HOWTO</a>
- * @see <a href="https://tldp.org/HOWTO/Traffic-Control-HOWTO/components.html">Classless Queuing Disciplines HOWTO</a>
+ * @see <a href="https://www.kernel.org/doc/html/latest/networking/index.html">Linux Networking Documentation</a>
  */
 public enum QdiscType {
 
   /** Простая FIFO очередь (First-In-First-Out). */
   PFIFO,
 
-  /** * FIFO с ограничением размера в байтах. */
+  /** FIFO с ограничением размера в байтах. */
   BFIFO,
 
   /**
@@ -109,29 +109,17 @@ public enum QdiscType {
   TAPRIO;
 
   /**
-   * Проверяет, существует ли указанная дисциплина очереди в перечислении QdiscType.
+   * Проверяет существование указанной дисциплины очереди.
    *
-   * <p>Нормализация имени выполняется через {@link StringUtils#normalizeForEnum}:
-   * <ul>
-   *   <li>Приведение к верхнему регистру</li>
-   *   <li>Замена тире на подчёркивания</li>
-   *   <li>Удаление пробелов по краям</li>
-   * </ul>
+   * <p>Перед проверкой выполняется нормализация в {@link StringUtils#normalizeForEnum(String)}.</p>
    *
-   * @param input название дисциплины (может быть null)
-   * @return true если значение существует, false если:
-   *         <ul>
-   *           <li>input == null</li>
-   *           <li>строка пустая</li>
-   *           <li>значение не найдено</li>
-   *         </ul>
+   * <p>Возвращает {@code true}, если после нормализации значение найдено;
+   * возвращает {@code false}, если {@code input == null}, строка пустая после trim()
+   * или такой дисциплины очереди не существует.</p>
    *
-   * @implNote Примеры:
-   * <ul>
-   *   <li>isValid("htb") → true</li>
-   *   <li>isValid(null) → false</li>
-   *   <li>isValid("invalid") → false</li>
-   * </ul>
+   * @param input название дисциплины очереди (может быть {@code null})
+   * @return {@code true}, если дисциплина существует; иначе {@code false}
+   * @see StringUtils#normalizeForEnum(String)
    */
   public static boolean isValid(String input) {
     try {
@@ -144,44 +132,24 @@ public enum QdiscType {
   }
 
   /**
-   * Возвращает элемент перечисления QdiscType по имени (без учёта регистра и с заменой тире).
+   * Возвращает элемент перечисления по имени, игнорируя регистр и дефисы.
    *
-   * <p><b>Нормализация имени:</b></p>
-   * <ol>
-   *   <li>Проверка на null и пустую строку</li>
-   *   <li>Удаление пробелов по краям</li>
-   *   <li>Приведение к верхнему регистру</li>
-   *   <li>Замена '-' на '_'</li>
-   * </ol>
+   * <p>Нормализация идентична {@link StringUtils#normalizeForEnum(String)}.</p>
    *
-   * @param input название дисциплины очереди
+   * @param input название дисциплины очереди; не может быть {@code null} или пустым
    * @return соответствующий элемент перечисления
-   * @throws NullPointerException если input == null
-   * @throws IllegalArgumentException если:
-   *         <ul>
-   *           <li>строка пустая после trim()</li>
-   *           <li>дисциплина с указанным именем не существует</li>
-   *         </ul>
-   *
-   * @implNote Примеры:
-   * <ul>
-   *   <li>getIgnoreCase("htb") → QdiscType.HTB</li>
-   *   <li>getIgnoreCase("fq-codel") → QdiscType.FQ_CODEL</li>
-   *   <li>getIgnoreCase(" pfifo_fast ") → QdiscType.PFIFO_FAST</li>
-   * </ul>
-   *
+   * @throws NullPointerException если {@code input == null}
+   * @throws IllegalArgumentException если строка пуста после trim() или значение не найдено
    * @see StringUtils#normalizeForEnum(String, String, String)
    */
-  public static QdiscType getIgnoreCase(String input)
-      throws IllegalArgumentException, NullPointerException {
+  public static QdiscType getIgnoreCase(String input) {
     input = StringUtils.normalizeForEnum(input,
         "Значение qdisc не может быть null",
         "Значение qdisc не может быть пустым");
-
     try {
       return QdiscType.valueOf(input);
     } catch (IllegalArgumentException e) {
-      throw new RuntimeException("Значение qdisc не найдено: " + input);
+      throw new IllegalArgumentException("Значение qdisc не найдено: " + input);
     }
   }
 }
