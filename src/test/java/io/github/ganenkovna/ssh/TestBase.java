@@ -1,9 +1,11 @@
-package ssh_via_java;
+package io.github.ganenkovna.ssh;
 
-import com.github.GanenkovNA.ssh.client.SshSession;
-import com.github.GanenkovNA.ssh.host.HostConfigReader;
-import com.github.GanenkovNA.ssh.host.HostConnectionConfigDto;
+import io.github.ganenkovna.ssh.client.SshSession;
+import io.github.ganenkovna.ssh.host.HostConfigIO;
+import io.github.ganenkovna.ssh.host.dto.HostConfigDTO;
+import io.github.ganenkovna.ssh.host.dto.HostConnectionConfigDTO;
 import com.jcraft.jsch.Session;
+import java.io.IOException;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 
@@ -27,7 +29,7 @@ import org.junit.jupiter.api.BeforeAll;
  * }
  * }</pre>
  *
- * @see HostConnectionConfigDto DTO с параметрами подключения
+ * @see HostConnectionConfigDTO DTO с параметрами подключения
  * @see SshSession Менеджер SSH-сессий
  */
 public class TestBase {
@@ -44,9 +46,20 @@ public class TestBase {
    * }
    * }</pre>
    */
-  protected static String hostConnectionConfigPath = "/host_connection_config.json";
-  /** Загруженная конфигурация подключения. */
-  protected static HostConnectionConfigDto config = HostConfigReader.getHostConnectionConfig(hostConnectionConfigPath);
+  protected static final String hostConfigsDir = "./src/test/resources";
+  protected static final String hostConnectionConfigName = "host_connection_config.json";
+  protected static final String hostInterfacesConfigName = "host_interfaces_config.json";
+
+  protected static final HostConfigDTO hostConfig;
+  static {
+    try {
+      hostConfig = new HostConfigDTO(HostConfigIO
+          .readConnectionConfig(hostConfigsDir, hostConnectionConfigName));
+    } catch (IOException e) {
+      throw new RuntimeException("Ошибка при загрузке host_connection_config.json", e);
+    }
+  }
+
   /** Менеджер SSH-сессии. */
   protected static SshSession sessionManage;
   /**
@@ -68,7 +81,7 @@ public class TestBase {
    */
   @BeforeAll
   public static void startUp(){
-    sessionManage = new SshSession(config);
+    sessionManage = new SshSession(hostConfig);
     currentSession = sessionManage.createSession();
   }
 
