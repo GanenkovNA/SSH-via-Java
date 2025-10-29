@@ -3,15 +3,18 @@ package io.github.ganenkovna.util;
 import java.util.Objects;
 
 /**
- * Утилитарный класс для работы со строками.
+ * Утилитарный класс для нормализации и валидации строковых значений.
  *
  * <p>Основные направления:</p>
  * <ul>
- *   <li>{@link #normalizeForDto(String, String, String)} — нормализация и валидация для DTO (кастомные сообщения)</li>
- *   <li>{@link #normalizeForDto(String, String)} — упрощённая перегрузка для DTO (дефолтные сообщения)</li>
- *   <li>{@link #normalizeForEnum(String, String, String)} — нормализация значений для enum (кастомные сообщения)</li>
- *   <li>{@link #normalizeForEnum(String, String)} — упрощённая перегрузка для enum (дефолтные сообщения)</li>
+ *   <li>{@link #normalizeForDto(String, String, String)} — нормализация и валидация для DTO (кастомные сообщения);</li>
+ *   <li>{@link #normalizeForDto(String, String)} — упрощённая перегрузка для DTO (дефолтные сообщения);</li>
+ *   <li>{@link #normalizeForEnum(String, String, String)} — нормализация строк для {@code enum}-значений (кастомные сообщения);</li>
+ *   <li>{@link #normalizeForEnum(String, String)} — упрощённая перегрузка для {@code enum} (дефолтные сообщения).</li>
  * </ul>
+ *
+ * <p>Методы не модифицируют исходную строку и всегда возвращают новый объект.
+ * Все возвращаемые строки никогда не {@code null}.</p>
  */
 public final class StringUtils {
   private static final String PREFIX = "Значение \"";
@@ -111,6 +114,23 @@ public final class StringUtils {
    */
   public static String normalizeForEnum(String input, String stringName){
     return normalizeForEnum(input,
+        PREFIX + stringName + NULL_SUFFIX,
+        PREFIX + stringName + EMPTY_SUFFIX);
+  }
+
+  /**
+   * Проверяет, что строка не {@code null} и не пустая после {@link String#trim()}, с автоматической
+   * генерацией сообщений об ошибках.
+   *
+   * @param input проверяемая строка
+   * @param stringName логическое имя проверяемого значения (используется в сообщениях об ошибках)
+   * @return нормализованная строка без ведущих/конечных пробелов; никогда не {@code null}
+   * @throws NullPointerException если {@code input == null}
+   * @throws IllegalArgumentException если строка пуста после {@code trim()}
+   * @see #requireNonBlank(String, String, String)
+   */
+  public static String requireNonBlank(String input, String stringName){
+    return requireNonBlank(input,
         PREFIX + stringName + NULL_SUFFIX,
         PREFIX + stringName + EMPTY_SUFFIX);
   }
