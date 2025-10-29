@@ -2,9 +2,9 @@ package io.github.ganenkovna.ssh.commands.ip.a.dto.addr.v6;
 
 import static io.github.ganenkovna.util.StringUtils.normalizeForDto;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import io.github.ganenkovna.util.IpUtils;
 import io.github.ganenkovna.util.StringUtils;
 import io.github.ganenkovna.ssh.commands.ip.a.dto.addr.LifeTimeParamsDto;
-import io.github.ganenkovna.util.IpValidation;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumSet;
@@ -91,7 +91,7 @@ public class InterfaceIpv6ConfigDto {
    * @param address IPv6-адрес в формате RFC&nbsp;5952; не {@code null}
    * @throws NullPointerException если {@code address == null}
    * @throws IllegalArgumentException если строка пуста после {@code trim()} или адрес не соответствует формату IPv6
-   * @see IpValidation#validateIpv6(String)
+   * @see IpUtils#validateIpv6(String)
    * @see StringUtils#normalizeForDto(String, String)
    * @see <a href="https://www.rfc-editor.org/rfc/rfc5952">RFC 5952</a>
    * @see <a href="https://www.rfc-editor.org/rfc/rfc4291">RFC 4291</a>
@@ -102,7 +102,7 @@ public class InterfaceIpv6ConfigDto {
     address = normalizeForDto(address,"IPv6-адрес");
 
     try {
-      IpValidation.validateIpv6(address);
+      IpUtils.validateIpv6(address);
       this.address = address;
     } catch (IllegalArgumentException e) {
       throw new IllegalArgumentException("Невалидное значение IPv6-адреса: " + address);

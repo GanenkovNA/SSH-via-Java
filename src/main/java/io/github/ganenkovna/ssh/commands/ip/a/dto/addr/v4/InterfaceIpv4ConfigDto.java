@@ -2,9 +2,10 @@ package io.github.ganenkovna.ssh.commands.ip.a.dto.addr.v4;
 
 import static io.github.ganenkovna.util.StringUtils.normalizeForDto;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import io.github.ganenkovna.util.IpUtils;
 import io.github.ganenkovna.util.StringUtils;
 import io.github.ganenkovna.ssh.commands.ip.a.dto.addr.LifeTimeParamsDto;
-import io.github.ganenkovna.util.IpValidation;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumSet;
@@ -72,14 +73,14 @@ public class InterfaceIpv4ConfigDto {
    * @param address IPv4-адрес в формате {@code x.x.x.x}; не {@code null}
    * @throws NullPointerException если {@code address == null}
    * @throws IllegalArgumentException если строка пуста после trim() или адрес не соответствует формату IPv4
-   * @see IpValidation#validateIpv4(String)
+   * @see IpUtils#validateIpv4(String)
    * @see StringUtils#normalizeForDto(String, String)
    */
   public void setAddress(String address) {
     address = normalizeForDto(address,"IPv4-адрес");
 
     try {
-      IpValidation.validateIpv4(address);
+      IpUtils.validateIpv4(address);
       this.address = address;
     } catch (IllegalArgumentException e) {
       throw new IllegalArgumentException("Невалидное значение IPv4-адреса: " + address);
@@ -107,14 +108,14 @@ public class InterfaceIpv4ConfigDto {
    * @param broadcast IPv4-адрес в формате {@code x.x.x.x}; не {@code null}
    * @throws NullPointerException если {@code broadcast == null}
    * @throws IllegalArgumentException если строка пуста после trim() или адрес не соответствует формату IPv4
-   * @see IpValidation#validateIpv4(String)
+   * @see IpUtils#validateIpv4(String)
    * @see StringUtils#normalizeForDto(String, String)
    */
   public void setBroadcast(String broadcast) {
     broadcast = normalizeForDto(broadcast,"IPv4 broadcast");
 
     try {
-      IpValidation.validateIpv4(broadcast);
+      IpUtils.validateIpv4(broadcast);
       this.broadcast = broadcast;
     } catch (IllegalArgumentException e) {
       throw new IllegalArgumentException("Невалидное значение IPv4 broadcast: " + broadcast);
