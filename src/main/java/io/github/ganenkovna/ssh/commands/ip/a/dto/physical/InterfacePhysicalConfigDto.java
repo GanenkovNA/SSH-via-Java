@@ -3,7 +3,7 @@ package io.github.ganenkovna.ssh.commands.ip.a.dto.physical;
 import static io.github.ganenkovna.util.StringUtils.normalizeForDto;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import io.github.ganenkovna.util.StringUtils;
-import io.github.ganenkovna.util.MacValidation;
+import io.github.ganenkovna.util.ip.MacValidation;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.AccessLevel;

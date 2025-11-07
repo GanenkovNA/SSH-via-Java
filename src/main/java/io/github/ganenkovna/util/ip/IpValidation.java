@@ -1,37 +1,31 @@
-package io.github.ganenkovna.util;
+package io.github.ganenkovna.util.ip;
 
 import java.util.Objects;
 import java.util.regex.Pattern;
-import org.apache.commons.net.util.SubnetUtils;
 
 /**
- * Утилиты для проверки и анализа IP-адресов.
+ * Валидатор IP-адресов.
  *
- * <p>Поддерживает базовые операции над IPv4 и IPv6:
+ * <p>Поддерживаемые форматы:</p>
  * <ul>
- *   <li>валидацию форматов (RFC 791, 4291, 5952, 4007);</li>
- *   <li>проверку принадлежности адреса подсети в CIDR-нотации;</li>
- *   <li>распознавание zone-suffix для link-local IPv6-адресов.</li>
+ *   <li>IPv4 (RFC 791): {@code 192.168.0.1}</li>
+ *   <li>IPv6 полный и сокращённый (RFC 4291 / RFC 5952): {@code 2001:db8::1}, {@code ::1}</li>
+ *   <li>IPv4-mapped IPv6: {@code ::ffff:192.168.0.1}</li>
+ *   <li>Необязательный zone-suffix (RFC 4007): {@code fe80::1%eth0}</li>
  * </ul>
  *
- * <p>Все методы выполняют проверку аргументов (fail-fast) и бросают исключения при ошибках
- * формата или {@code null}-значениях.</p>
+ * <p>Все методы бросают исключения при невалидных данных (fail-fast).</p>
  *
- * @see <a href="https://www.rfc-editor.org/rfc/rfc791">RFC 791 — Internet Protocol (IPv4)</a>
- * @see <a href="https://www.rfc-editor.org/rfc/rfc4291">RFC 4291 — IPv6 Addressing Architecture</a>
- * @see <a href="https://www.rfc-editor.org/rfc/rfc5952">RFC 5952 — IPv6 Text Representation</a>
- * @see <a href="https://www.rfc-editor.org/rfc/rfc4007">RFC 4007 — IPv6 Scoped Address Architecture</a>
+ * @implNote Для ускорения проверки используются предкомпилированные регулярные выражения.
  */
-public final class IpUtils {
+public final class IpValidation {
   /** Запрет инстанцирования. */
-  private IpUtils() {
+  private IpValidation() {
     throw new AssertionError("No instances");
   }
 
-  // === IPv4 ===
   private static final Pattern IP4_PATTERN = Pattern.compile(
           "^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$");
-  // === IPv6 ===
   private static final Pattern IP6_FULL_PATTERN = Pattern.compile(
       "^([0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}$");
   private static final Pattern IP6_SHORT_PATTERN = Pattern.compile(
@@ -93,29 +87,5 @@ public final class IpUtils {
       return true;
     }
     throw new IllegalArgumentException("Неверный формат IPv6-адреса: " + ip);
-  }
-
-  /**
-   * Проверяет, принадлежит ли IP-адрес указанной подсети в CIDR-нотации.
-   *
-   * <p>Пример использования:</p>
-   * <pre>{@code
-   * boolean result = IpUtils.isIpInSubnet("192.168.10.10", "192.168.10.0/24");
-   * // result == true
-   * }</pre>
-   *
-   * @param ip проверяемый IP-адрес; не {@code null}
-   * @param cidr подсеть в CIDR-нотации (например {@code 192.168.10.0/24}); не {@code null}
-   * @return {@code true}, если {@code ip} входит в указанную подсеть
-   * @throws NullPointerException если любой аргумент равен {@code null}
-   * @throws IllegalArgumentException если {@code cidr} не соответствует формату CIDR
-   * @see <a href="https://www.rfc-editor.org/rfc/rfc4632">RFC 4632 — CIDR for IPv4</a>
-   * @see <a href="https://www.rfc-editor.org/rfc/rfc4291">RFC 4291 — IPv6 Addressing</a>
-   */
-  public static boolean isIpInSubnet(String ip, String cidr){
-    Objects.requireNonNull(ip, "IP-адрес не может быть null");
-    Objects.requireNonNull(cidr, "CIDR-подсеть не может быть null");
-    SubnetUtils utils = new SubnetUtils(cidr);
-    return utils.getInfo().isInRange(ip);
   }
 }

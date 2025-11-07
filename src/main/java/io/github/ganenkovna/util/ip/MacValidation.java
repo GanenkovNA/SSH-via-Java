@@ -1,4 +1,4 @@
-package io.github.ganenkovna.util;
+package io.github.ganenkovna.util.ip;
 
 import java.util.Objects;
 import java.util.regex.Pattern;
