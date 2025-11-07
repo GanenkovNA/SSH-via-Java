@@ -1,6 +1,5 @@
 package io.github.ganenkovna.ssh.commands.ip.a.service;
 
-import static io.github.ganenkovna.ssh.commands.ip.a.service.ParserTokens.ANSI_ESC;
 import static io.github.ganenkovna.ssh.commands.ip.a.service.ParserTokens.BROADCAST_KEYS;
 import static io.github.ganenkovna.ssh.commands.ip.a.service.ParserTokens.INDEX_PATTERN;
 import java.util.List;
@@ -23,10 +22,6 @@ public final class ParserUtils {
   /** Запрет инстанцирования. */
   private ParserUtils() {
     throw new AssertionError("No instances");
-  }
-
-  public static String stripAnsi(String s) {
-    return ANSI_ESC.matcher(s).replaceAll("");
   }
 
   /**

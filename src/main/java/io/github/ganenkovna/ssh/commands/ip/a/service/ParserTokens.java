@@ -21,9 +21,6 @@ public final class ParserTokens {
     throw new AssertionError("No instances");
   }
 
-  public static final java.util.regex.Pattern ANSI_ESC =
-      java.util.regex.Pattern.compile("\u001B\\[[0-?]*[ -/]*[@-~]");
-
   /**
    * Шаблон для извлечения индекса интерфейса.
    *
