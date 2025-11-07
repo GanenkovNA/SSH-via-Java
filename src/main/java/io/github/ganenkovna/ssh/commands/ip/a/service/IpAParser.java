@@ -2,7 +2,7 @@ package io.github.ganenkovna.ssh.commands.ip.a.service;
 
 import static io.github.ganenkovna.ssh.commands.ip.a.service.ParserTokens.*;
 import static io.github.ganenkovna.ssh.commands.ip.a.service.ParserUtils.*;
-import static io.github.ganenkovna.util.MacValidation.validateMac;
+import static io.github.ganenkovna.util.ip.MacValidation.validateMac;
 
 import io.github.ganenkovna.ssh.commands.ip.a.dto.InterfaceDto;
 import io.github.ganenkovna.ssh.commands.ip.a.dto.addr.LifeTimeParamsDto;
@@ -18,6 +18,7 @@ import io.github.ganenkovna.ssh.commands.ip.a.dto.base.InterfaceFlag;
 import io.github.ganenkovna.ssh.commands.ip.a.dto.base.InterfaceState;
 import io.github.ganenkovna.ssh.commands.ip.a.dto.base.QdiscType;
 import io.github.ganenkovna.ssh.commands.ip.a.dto.physical.InterfacePhysicalConfigDto;
+import io.github.ganenkovna.util.parser.ParsersUtils;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -40,6 +41,11 @@ import java.util.regex.Matcher;
  */
 public final class IpAParser {
 
+  /** Запрет инстанцирования. */
+  private IpAParser() {
+    throw new AssertionError("No instances");
+  }
+
   /**
    * Парсит вывод команды {@code ip a} в список DTO интерфейсов.
    *
@@ -51,7 +57,7 @@ public final class IpAParser {
     // Проверка вывода команды на пустую строку
     Objects.requireNonNull(ipAOutput, "Вывод команды `ip a` не может быть null");
     // На случай, если цвет не был отключён на стороне вызова
-    ipAOutput = ParserUtils.stripAnsi(ipAOutput);
+    ipAOutput = ParsersUtils.stripAnsi(ipAOutput);
     if (ipAOutput.isBlank()) {
       return Collections.emptyList();
     }

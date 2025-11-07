@@ -3,6 +3,7 @@ package io.github.ganenkovna.ssh.commands.ip.a.dto.base;
 import static io.github.ganenkovna.util.StringUtils.normalizeForDto;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import io.github.ganenkovna.util.StringUtils;
+import io.github.ganenkovna.util.ip.MtuValidation;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumSet;
@@ -180,40 +181,25 @@ public class InterfaceBaseConfigDto {
   }
 
   /**
-   * Устанавливает MTU интерфейса.
+   * Задаёт значение MTU для данного интерфейса.
    *
-   * <p>Перед проверкой выполняется базовая валидация значения.</p>
-   *
-   * <p>Правила (приближены к поведению iproute2):</p>
+   * <p>Перед присвоением выполняется валидация значения
+   * (приближена к поведению {@code iproute2}):</p>
    * <ul>
-   *   <li>для обычных интерфейсов: допустимый диапазон {@code 68..9000};</li>
-   *   <li>для loopback-интерфейса: дополнительно допускаются значения {@code 65535} и {@code 65536}.</li>
+   *   <li>для обычных интерфейсов допустим диапазон {@code 68..9000};</li>
+   *   <li>для loopback-интерфейса дополнительно допускаются {@code 65535} и {@code 65536}.</li>
    * </ul>
    *
    * <p>Примечание: минимальные значения по протоколам (например, IPv6 ≥ {@code 1280})
-   * не проверяются в данном DTO, так как это зависит от конкретной конфигурации
-   * и проверяется на уровне протокола/ядра.</p>
+   * не проверяются на уровне DTO, так как зависят от конкретной конфигурации
+   * и контролируются ядром или сетевыми службами.</p>
    *
-   * @param mtu значение MTU или {@code null}, если MTU не задан
-   * @throws IllegalArgumentException если {@code mtu} выходит за пределы допустимых значений
+   * @param mtu значение MTU
+   * @throws IllegalArgumentException если значение выходит за пределы допустимых
    */
   public void setMtu(int mtu) {
-    // Проверяем стандартный диапазон для обычных интерфейсов
-    if (mtu >= 68 && mtu <= 9000) {
-      this.mtu = mtu;
-      return;
-    }
-
-    // Дополнительная проверка для loopback
-    if (mtu == 65535 || mtu == 65536) {
-      this.mtu = mtu;
-      return;
-    }
-
-    throw new IllegalArgumentException("Недопустимое значение MTU: " + mtu
-        + ". Допустимые значения:\n"
-        + "- Для обычных интерфейсов: 68-9000\n"
-        + "- Для loopback: дополнительно 65535 и 65536");
+    MtuValidation.validateMtu(mtu);
+    this.mtu = mtu;
   }
 
   /**
