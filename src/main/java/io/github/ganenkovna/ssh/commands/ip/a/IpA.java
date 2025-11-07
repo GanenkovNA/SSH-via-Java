@@ -35,6 +35,7 @@ import java.util.List;
  */
 public final class IpA {
   private static final String CMD_IP_A = "IPROUTE_COLOR=never ip -c=never a";
+  private static final String COMMAND = "ip a";
 
   /** Запрет инстанцирования. */
   private IpA() {
@@ -59,17 +60,22 @@ public final class IpA {
     SshChannel channel = new SshChannel(session);
     final String[] result = channel.execChannel(CMD_IP_A);
 
+    if (result == null || result.length < 3) {
+      throw new IllegalStateException(
+          "Некорректный ответ от execChannel для `" + COMMAND + "`: ожидается [exit, stdout, stderr]");
+    }
+
     final int exitCode;
     try {
       exitCode = Integer.parseInt(result[0]);
     } catch (NumberFormatException e) {
-      throw new IllegalStateException("Некорректный код завершения команды `ip a`: " + result[0], e);
+      throw new IllegalStateException("Некорректный код завершения команды `" + COMMAND + "`: " + result[0], e);
     }
 
     if (exitCode == 0) {
       return IpAParser.parseOutput(result[1]);
     } else {
-      throw new IllegalStateException("Команда 'ip a' не была успешно выполнена"
+      throw new IllegalStateException("Команда '" + COMMAND + "' не была успешно выполнена"
           + "\nКод завершения: " + exitCode
           + "\nВывод stderr: " + result[2]);
     }
