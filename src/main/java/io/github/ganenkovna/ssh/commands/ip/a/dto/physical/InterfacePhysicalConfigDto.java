@@ -13,7 +13,7 @@ import lombok.Setter;
 /** Физические параметры сетевого интерфейса. */
 @Data
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
-public class InterfacePhysicalConfigDto {
+public final class InterfacePhysicalConfigDto {
 
   /** Тип канального уровня (например, "ether", "loopback"). */
   private String linkType;

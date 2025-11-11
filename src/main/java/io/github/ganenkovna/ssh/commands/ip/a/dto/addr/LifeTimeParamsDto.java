@@ -28,7 +28,7 @@ import lombok.Setter;
  */
 @Data
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
-public class LifeTimeParamsDto {
+public final class LifeTimeParamsDto {
 
   /** Время жизни адреса до недействительности. */
   private String validLft;

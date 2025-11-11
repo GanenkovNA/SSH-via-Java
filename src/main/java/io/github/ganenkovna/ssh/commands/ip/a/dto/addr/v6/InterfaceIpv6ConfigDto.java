@@ -29,7 +29,7 @@ import lombok.Setter;
  */
 @Data
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
-public class InterfaceIpv6ConfigDto {
+public final class InterfaceIpv6ConfigDto {
 
   /** IPv6-адрес интерфейса в формате RFC 5952. */
   private String address;

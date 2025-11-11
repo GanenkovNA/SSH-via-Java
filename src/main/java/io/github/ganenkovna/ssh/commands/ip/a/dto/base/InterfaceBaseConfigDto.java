@@ -24,7 +24,7 @@ import lombok.Setter;
  */
 @Data
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
-public class InterfaceBaseConfigDto {
+public final class InterfaceBaseConfigDto {
 
   /**
    * Уникальный индекс интерфейса (ifindex) в ядре Linux.

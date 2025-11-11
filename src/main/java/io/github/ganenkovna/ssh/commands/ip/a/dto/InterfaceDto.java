@@ -27,7 +27,7 @@ import lombok.Setter;
  */
 @Data
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
-public class InterfaceDto {
+public final class InterfaceDto {
 
   /** Базовые параметры интерфейса. */
   private InterfaceBaseConfigDto interfaceParams;

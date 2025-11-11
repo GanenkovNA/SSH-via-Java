@@ -27,7 +27,7 @@ import lombok.Setter;
  */
 @Data
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
-public class InterfaceIpv4ConfigDto {
+public final class InterfaceIpv4ConfigDto {
 
   /** IPv4-адрес интерфейса в формате "x.x.x.x". */
   private String address;
