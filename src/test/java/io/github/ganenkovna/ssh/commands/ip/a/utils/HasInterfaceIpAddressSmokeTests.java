@@ -1,12 +1,13 @@
 package io.github.ganenkovna.ssh.commands.ip.a.utils;
 
-import static io.github.ganenkovna.ssh.commands.ip.a.utils.TestUtils.hasInterfaceIpAddress;
+import static io.github.ganenkovna.ssh.commands.ip.a.utils.IpATestSupport.hasInterfaceIpAddress;
 import io.github.ganenkovna.ssh.TestBase;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 /**
- * Smoke-тесты для метода {@link TestUtils#hasInterfaceIpAddress}.
+ * Smoke-тесты для метода {@link IpATestSupport#hasInterfaceIpAddress}.
  *
  * <p>Проверяют базовую корректность работы утилиты при анализе вывода {@code ip a}
  * в рамках активной SSH-сессии, полученной от {@link TestBase}.
@@ -19,7 +20,7 @@ import org.junit.jupiter.api.Test;
  *   <li>интерфейс не содержит указанный IP-адрес (ожидается {@code false}).</li>
  * </ul>
  *
- * @see TestUtils#hasInterfaceIpAddress
+ * @see IpATestSupport#hasInterfaceIpAddress
  * @see io.github.ganenkovna.ssh.commands.ip.a.IpA#showInterfaces(com.jcraft.jsch.Session)
  */
 public class HasInterfaceIpAddressSmokeTests extends TestBase {
@@ -31,20 +32,22 @@ public class HasInterfaceIpAddressSmokeTests extends TestBase {
   private static final String invalidTestAddress = "192.168.10.9/24";
 
   /**
-   * Проверяет, что {@link TestUtils#hasInterfaceIpAddress} возвращает {@code true},
+   * Проверяет, что {@link IpATestSupport#hasInterfaceIpAddress} возвращает {@code true},
    * если интерфейс действительно содержит указанный IP-адрес.
    */
   @Test
+  @DisplayName("Проверка существующего IP-адреса")
   public void shouldReturnTrue() {
     boolean result = hasInterfaceIpAddress(currentSession, testInterface, validTestAddress);
     Assertions.assertTrue(result);
   }
 
   /**
-   * Проверяет, что {@link TestUtils#hasInterfaceIpAddress} возвращает {@code false},
+   * Проверяет, что {@link IpATestSupport#hasInterfaceIpAddress} возвращает {@code false},
    * если интерфейс не содержит указанный IP-адрес.
    */
   @Test
+  @DisplayName("Проверка несуществующего IP-адреса")
   public void shouldReturnFalse() {
     boolean result = hasInterfaceIpAddress(currentSession, testInterface, invalidTestAddress);
     Assertions.assertFalse(result);

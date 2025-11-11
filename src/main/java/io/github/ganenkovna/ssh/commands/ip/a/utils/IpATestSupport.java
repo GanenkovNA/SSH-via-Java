@@ -29,9 +29,9 @@ import java.util.Objects;
  *   <li>коллекции из DTO считаются «никогда не {@code null}, могут быть пустыми».</li>
  * </ul>
  */
-public final class TestUtils {
+public final class IpATestSupport {
   /** Запрет инстанцирования. */
-  private TestUtils() {
+  private IpATestSupport() {
     throw new AssertionError("No instances");
   }
 
