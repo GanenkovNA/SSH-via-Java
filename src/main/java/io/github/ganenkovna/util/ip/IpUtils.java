@@ -1,5 +1,7 @@
 package io.github.ganenkovna.util.ip;
 
+import static io.github.ganenkovna.util.StringUtils.normalizeForDto;
+import io.github.ganenkovna.util.StringUtils;
 import java.util.Objects;
 import java.util.regex.Pattern;
 import org.apache.commons.net.util.SubnetUtils;
@@ -31,6 +33,7 @@ public final class IpUtils {
   // === IPv4 ===
   private static final Pattern IP4_PATTERN = Pattern.compile(
           "^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$");
+  private static final Pattern IP4_PREFIX_LEN = Pattern.compile("^(?:3[0-2]|[12]?\\d)$");
   // === IPv6 ===
   private static final Pattern IP6_FULL_PATTERN = Pattern.compile(
       "^([0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}$");
@@ -42,10 +45,45 @@ public final class IpUtils {
   private static final Pattern IPV6_ZONE_SUFFIX = Pattern.compile("%[\\w.:-]+$");
 
   /**
+   * Проверяет корректность IPv4-CIDR строки вида {@code A.B.C.D/len}.
+   *
+   * <p>Выполняются следующие шаги:</p>
+   * <ol>
+   *   <li>нормализация входной строки через {@link StringUtils#normalizeForDto(String, String)};</li>
+   *   <li>проверка структуры {@code ip/prefix};</li>
+   *   <li>валидация IPv4-адреса через {@link #validateIpv4(String)};</li>
+   *   <li>валидация длины префикса через {@link #validateIpv4Prefix(String)}.</li>
+   * </ol>
+   *
+   * @param cidr CIDR-строка; не может быть {@code null} или пустой
+   * @return {@code true}, если строка корректна
+   * @throws NullPointerException если {@code cidr == null}
+   * @throws IllegalArgumentException если строка не соответствует формату {@code A.B.C.D/len}
+   * @see #validateIpv4(String)
+   * @see #validateIpv4Prefix(String)
+   */
+  public static boolean validateIpv4Cidr(String cidr){
+    cidr = normalizeForDto(cidr, "CIDR-строка");
+
+    final int slash = cidr.indexOf('/');
+    if (slash <= 0 || slash == cidr.length()-1){
+      throw new IllegalArgumentException("Ожидается формат A.B.C.D/len: " + cidr);
+    }
+
+    final String ip = cidr.substring(0, slash).trim();
+    validateIpv4(ip);
+
+    final String len = cidr.substring(slash + 1).trim();
+    validateIpv4Prefix(len);
+
+    return true;
+  }
+
+  /**
    * Проверяет корректность IPv4-адреса.
    *
-   * @param ip адрес для проверки; не может быть {@code null}
-   * @return {@code true}, если адрес соответствует формату IPv4
+   * @param ip IPv4-адрес; не может быть {@code null}
+   * @return {@code true}, если строка соответствует формату IPv4
    * @throws NullPointerException если {@code ip == null}
    * @throws IllegalArgumentException если адрес не соответствует формату IPv4
    * @see <a href="https://www.rfc-editor.org/rfc/rfc791">RFC 791</a>
@@ -56,6 +94,24 @@ public final class IpUtils {
         return true;
     }
     throw new IllegalArgumentException("Неверный формат IPv4-адреса: " + ip);
+  }
+
+  /**
+   * Проверяет корректность длины IPv4-префикса.
+   *
+   * <p>Допустимые значения: {@code 0..32}.</p>
+   *
+   * @param prefix длина префикса; не может быть {@code null}
+   * @return {@code true}, если префикс корректен
+   * @throws NullPointerException если {@code prefix == null}
+   * @throws IllegalArgumentException если значение вне диапазона {@code 0..32}
+   */
+  public static boolean validateIpv4Prefix(String prefix){
+    Objects.requireNonNull(prefix, "IPv4-префикс не может быть null");
+    if (!IP4_PREFIX_LEN.matcher(prefix).matches()) {
+      throw new IllegalArgumentException("Длина префикса вне диапазона 0..32: " + prefix);
+    }
+    return true;
   }
 
   /**
@@ -100,7 +156,7 @@ public final class IpUtils {
    *
    * <p>Пример использования:</p>
    * <pre>{@code
-   * boolean result = IpUtils.isIpInSubnet("192.168.10.10", "192.168.10.0/24");
+   * boolean result = IpUtilsTests.isIpInSubnet("192.168.10.10", "192.168.10.0/24");
    * // result == true
    * }</pre>
    *
