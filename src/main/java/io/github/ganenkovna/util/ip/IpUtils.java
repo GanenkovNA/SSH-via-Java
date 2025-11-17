@@ -1,6 +1,7 @@
 package io.github.ganenkovna.util.ip;
 
 import static io.github.ganenkovna.util.StringUtils.normalizeForDto;
+import static io.github.ganenkovna.util.StringUtils.requireNonBlank;
 import io.github.ganenkovna.util.StringUtils;
 import java.util.Objects;
 import java.util.regex.Pattern;
@@ -12,7 +13,7 @@ import org.apache.commons.net.util.SubnetUtils;
  * <p>Поддерживает базовые операции над IPv4 и IPv6:
  * <ul>
  *   <li>валидацию форматов (RFC 791, 4291, 5952, 4007);</li>
- *   <li>проверку принадлежности адреса подсети в CIDR-нотации;</li>
+ *   <li>проверку принадлежности адреса подсети в CIDR-нотации для IPv4;</li>
  *   <li>распознавание zone-suffix для link-local IPv6-адресов.</li>
  * </ul>
  *
@@ -152,26 +153,114 @@ public final class IpUtils {
   }
 
   /**
-   * Проверяет, принадлежит ли IP-адрес указанной подсети в CIDR-нотации.
+   * Проверяет, принадлежит ли IPv4-адрес указанной подсети (CIDR v4).
+   *
+   * <p>Ожидается строка формата {@code A.B.C.D/len}, где {@code len} в диапазоне {@code 0..32}.
+   * Метод валидирует как адрес, так и маску префикса и использует {@link SubnetUtils}
+   * для вычисления принадлежности. По умолчанию адрес сети и broadcast-адрес
+   * считаются <em>не</em>хостами и в диапазон не входят.</p>
    *
    * <p>Пример использования:</p>
    * <pre>{@code
-   * boolean result = IpUtilsTests.isIpInSubnet("192.168.10.10", "192.168.10.0/24");
+   * boolean result = IpUtils.isIpInSubnet("192.168.10.10", "192.168.10.0/24");
    * // result == true
    * }</pre>
    *
    * @param ip проверяемый IP-адрес; не {@code null}
-   * @param cidr подсеть в CIDR-нотации (например {@code 192.168.10.0/24}); не {@code null}
-   * @return {@code true}, если {@code ip} входит в указанную подсеть
+   * @param cidr подсеть в CIDR-нотации (например, {@code 192.168.10.0/24}); не {@code null}
+   * @return {@code true}, если {@code ip} входит в указанную подсеть (без учёта адреса сети и broadcast)
    * @throws NullPointerException если любой аргумент равен {@code null}
-   * @throws IllegalArgumentException если {@code cidr} не соответствует формату CIDR
-   * @see <a href="https://www.rfc-editor.org/rfc/rfc4632">RFC 4632 — CIDR for IPv4</a>
-   * @see <a href="https://www.rfc-editor.org/rfc/rfc4291">RFC 4291 — IPv6 Addressing</a>
+   * @throws IllegalArgumentException если {@code ip} или {@code cidr} не соответствуют IPv4-формату
+   * @see SubnetUtils
+   * @see #validateIpv4(String)
+   * @see #validateIpv4Cidr(String)
    */
   public static boolean isIpInSubnet(String ip, String cidr){
-    Objects.requireNonNull(ip, "IP-адрес не может быть null");
-    Objects.requireNonNull(cidr, "CIDR-подсеть не может быть null");
+    ip = requireNonBlank(ip, "IP-адрес");
+    validateIpv4(ip);
+    cidr = requireNonBlank(cidr, "Подсеть в CIDR-нотации");
+    validateIpv4Cidr(cidr);
+
     SubnetUtils utils = new SubnetUtils(cidr);
     return utils.getInfo().isInRange(ip);
+  }
+
+  /**
+   * Проверяет пересечение двух IPv4-подсетей (CIDR v4).
+   *
+   * <p>Определение пересечения выполняется через сравнение числовых интервалов:
+   * вычисляются минимальный/максимальный адреса каждой подсети, после чего
+   * интервалы проверяются на пересечение по правилу {@code aLow <= bHigh && bLow <= aHigh}.</p>
+   *
+   * <p><b>Важно:</b> для корректности сравнения адрес сети и broadcast-адрес
+   * считаются как обычные хост-адреса ({@link SubnetUtils#setInclusiveHostCount(boolean)} = {@code true}).</p>
+   *
+   * <p>Пример:</p>
+   * <pre>{@code
+   * // true: 192.168.1.0/24 и 192.168.1.128/25 пересекаются
+   * boolean r1 = IpUtils.cidrOverlap("192.168.1.0/24", "192.168.1.128/25");
+   *
+   * // false: непересекающиеся подсети
+   * boolean r2 = IpUtils.cidrOverlap("10.0.0.0/24", "10.0.1.0/24");
+   * }</pre>
+   *
+   * @param cidr1 подсеть 1 в виде {@code A.B.C.D/len}; не {@code null}
+   * @param cidr2 подсеть 2 в виде {@code A.B.C.D/len}; не {@code null}
+   * @return {@code true}, если диапазоны адресов пересекаются; иначе {@code false}
+   * @throws NullPointerException если любой аргумент равен {@code null}
+   * @throws IllegalArgumentException если любая из строк не соответствует формату IPv4-CIDR
+   * @see SubnetUtils
+   * @see SubnetUtils#setInclusiveHostCount(boolean)
+   * @see #validateIpv4Cidr(String)
+   */
+  public static boolean cidrOverlap(String cidr1, String cidr2){
+    cidr1 = requireNonBlank(cidr1, "Подсеть 1 в CIDR-нотации");
+    validateIpv4Cidr(cidr1);
+    cidr2 = requireNonBlank(cidr2, "Подсеть 2 в CIDR-нотации");
+    validateIpv4Cidr(cidr2);
+
+    SubnetUtils s1 = new SubnetUtils(cidr1);
+    SubnetUtils s2 = new SubnetUtils(cidr2);
+
+    //Считаем network address и broadcast address как обычные хосты
+    s1.setInclusiveHostCount(true);
+    s2.setInclusiveHostCount(true);
+
+    SubnetUtils.SubnetInfo i1 = s1.getInfo();
+    SubnetUtils.SubnetInfo i2 = s2.getInfo();
+
+    long aLow = ipToLong(i1.getLowAddress());
+    long aHigh = ipToLong(i1.getHighAddress());
+    long bLow = ipToLong(i2.getLowAddress());
+    long bHigh = ipToLong(i2.getHighAddress());
+
+    return aLow <= bHigh && bLow <= aHigh;
+  }
+
+  /**
+   * Преобразует IPv4-адрес в беззнаковое 32-битное представление в виде {@code long}.
+   *
+   * <p>Ожидается нормализованный адрес в точечной записи {@code A.B.C.D}, где каждый октет
+   * в диапазоне {@code 0..255}. Старший октет попадает в старшие 8 бит результата.</p>
+   *
+   * <p>Примеры:</p>
+   * <pre>{@code
+   * ipToLong("0.0.0.0")       == 0L
+   * ipToLong("255.255.255.255") == 4294967295L
+   * ipToLong("192.168.1.1")     == 3232235777L
+   * }</pre>
+   *
+   * @param ip IPv4-адрес в виде {@code A.B.C.D}; не {@code null}, корректность формата ожидается «сверху»
+   * @return числовое представление адреса как {@code long} в диапазоне {@code 0..4294967295}
+   * @throws NumberFormatException если любой из октетов не является десятичным числом
+   * @implNote Метод предполагает, что валидность строки уже проверена (например, через {@link #validateIpv4(String)}),
+   * и используется внутренне для расчётов диапазонов.
+   */
+  private static long ipToLong(String ip) {
+    long result = 0;
+    for (String part : ip.split("\\.")) {
+      result = result << 8 | Integer.parseInt(part);
+    }
+    return result;
   }
 }
