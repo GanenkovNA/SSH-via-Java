@@ -47,14 +47,14 @@ public final class IpATestSupport {
    * @throws IllegalArgumentException если {@code interfaceName} пустой/пробельный
    * @see IpA#showInterfaces(Session)
    */
-  public static boolean interfaceExists(Session session, String interfaceName){
+  public static boolean interfaceExists(Session session, String interfaceName) {
     Objects.requireNonNull(session);
     interfaceName = normalizeForDto(interfaceName, "Название интерфейса");
 
     List<InterfaceDto> interfaces = IpA.showInterfaces(session);
-    for (InterfaceDto it : interfaces){
+    for (InterfaceDto it : interfaces) {
       if (interfaceName.equalsIgnoreCase(
-          it.getInterfaceParams().getName())){
+          it.getInterfaceParams().getName())) {
         return true;
       }
     }
@@ -70,7 +70,8 @@ public final class IpATestSupport {
    *
    * @param session активная SSH-сессия; строго не {@code null}
    * @param interfaceName имя интерфейса; не {@code null}, не пустое/пробельное
-   * @param ipAddress IP-адрес в формате {@code address/prefix}; не {@code null}, не пустой/пробельный
+   * @param ipAddress IP-адрес в формате {@code address/prefix};
+   *                  не {@code null}, не пустой/пробельный
    * @return {@code true}, если интерфейс найден и содержит указанный IP-адрес;
    *         {@code false}, если интерфейс отсутствует или адрес не найден
    * @throws NullPointerException если любой из аргументов равен {@code null}
@@ -78,7 +79,8 @@ public final class IpATestSupport {
    *         пустой/пробельный (см. {@link StringUtils#normalizeForDto(String, String)})
    * @see IpA#showInterfaces(Session)
    */
-  public static boolean hasInterfaceIpAddress(Session session, String interfaceName, String ipAddress) {
+  public static boolean hasInterfaceIpAddress(
+      Session session, String interfaceName, String ipAddress) {
     Objects.requireNonNull(session);
     interfaceName = normalizeForDto(interfaceName, "Название интерфейса");
     ipAddress = normalizeForDto(ipAddress, "IP-адрес");
@@ -124,7 +126,7 @@ public final class IpATestSupport {
    * @see VlanValidation#validateVlanId(int)
    * @see IpA#showInterfaces(Session)
    */
-  public static boolean vlanInterfaceExists(Session session, String interfaceName, int vlanId){
+  public static boolean vlanInterfaceExists(Session session, String interfaceName, int vlanId) {
     Objects.requireNonNull(session);
     String vlanInterfaceName = getVlanInterfaceName(interfaceName, vlanId);
 
@@ -137,7 +139,8 @@ public final class IpATestSupport {
    * @param session активная SSH-сессия; строго не {@code null}
    * @param interfaceName базовое имя интерфейса; не {@code null}, не пустое/пробельное
    * @param vlanId VLAN ID; допустимый диапазон {@code 1..4094}
-   * @param ipAddress IP-адрес в формате {@code address/prefix}; не {@code null}, не пустой/пробельный
+   * @param ipAddress IP-адрес в формате {@code address/prefix};
+   *                  не {@code null}, не пустой/пробельный
    * @return {@code true}, если VLAN-интерфейс найден и содержит IP-адрес; иначе {@code false}
    * @throws NullPointerException если любой из аргументов равен {@code null}
    * @throws IllegalArgumentException если строковые аргументы пустые/пробельные
@@ -145,7 +148,8 @@ public final class IpATestSupport {
    * @see #getVlanInterfaceName(String, int)
    * @see IpA#showInterfaces(Session)
    */
-  public static boolean hasVlanInterfaceIpAddress(Session session, String interfaceName, int vlanId, String ipAddress){
+  public static boolean hasVlanInterfaceIpAddress(
+      Session session, String interfaceName, int vlanId, String ipAddress) {
     Objects.requireNonNull(session);
     String vlanInterfaceName = getVlanInterfaceName(interfaceName, vlanId);
 
@@ -164,9 +168,9 @@ public final class IpATestSupport {
    *                                  или {@code vlanId} вне диапазона
    * @see VlanValidation#validateVlanId(int)
    */
-  public static String getVlanInterfaceName(String interfaceName, int vlanId){
-     interfaceName = normalizeForDto(interfaceName, "Название интерфейса");
-     VlanValidation.validateVlanId(vlanId);
-     return interfaceName + "." + vlanId + "@" + interfaceName;
+  public static String getVlanInterfaceName(String interfaceName, int vlanId) {
+    interfaceName = normalizeForDto(interfaceName, "Название интерфейса");
+    VlanValidation.validateVlanId(vlanId);
+    return interfaceName + "." + vlanId + "@" + interfaceName;
   }
 }

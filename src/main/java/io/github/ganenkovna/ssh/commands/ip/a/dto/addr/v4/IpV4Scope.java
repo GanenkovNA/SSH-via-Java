@@ -1,6 +1,7 @@
 package io.github.ganenkovna.ssh.commands.ip.a.dto.addr.v4;
 
 import static io.github.ganenkovna.util.StringUtils.normalizeForEnum;
+
 import io.github.ganenkovna.util.StringUtils;
 
 /**
@@ -40,7 +41,8 @@ public enum IpV4Scope {
   /**
    * Проверяет существование указанной области видимости IPv4.
    *
-   * <p>Перед проверкой выполняется нормализация в {@link StringUtils#normalizeForEnum(String, String)}.</p>
+   * <p>Перед проверкой выполняется нормализация
+   * в {@link StringUtils#normalizeForEnum(String, String)}.</p>
    *
    * <p>Возвращает {@code true}, если после нормализации значение найдено;
    * возвращает {@code false}, если {@code input == null}, строка пустая после trim()
@@ -72,7 +74,7 @@ public enum IpV4Scope {
    * @see StringUtils#normalizeForEnum(String, String)
    */
   public static IpV4Scope getIgnoreCase(String input) {
-    input = normalizeForEnum(input,"Область видимости IPv4");
+    input = normalizeForEnum(input, "Область видимости IPv4");
 
     try {
       return IpV4Scope.valueOf(input);

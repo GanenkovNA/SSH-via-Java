@@ -1,9 +1,9 @@
 package io.github.ganenkovna.ssh.commands.ip.a;
 
+import com.jcraft.jsch.Session;
 import io.github.ganenkovna.ssh.client.SshChannel;
 import io.github.ganenkovna.ssh.commands.ip.a.dto.InterfaceDto;
 import io.github.ganenkovna.ssh.commands.ip.a.service.IpAParser;
-import com.jcraft.jsch.Session;
 import java.util.List;
 
 /**
@@ -27,7 +27,7 @@ import java.util.List;
  * }</pre>
  *
  * @implNote Класс не потокозависим и может безопасно использоваться из разных потоков,
- * так как не содержит изменяемых полей.
+ *     так как не содержит изменяемых полей.
  *
  * @see SshChannel
  * @see IpAParser
@@ -62,14 +62,16 @@ public final class IpA {
 
     if (result == null || result.length < 3) {
       throw new IllegalStateException(
-          "Некорректный ответ от execChannel для `" + COMMAND + "`: ожидается [exit, stdout, stderr]");
+          "Некорректный ответ от execChannel для `"
+              + COMMAND + "`: ожидается [exit, stdout, stderr]");
     }
 
     final int exitCode;
     try {
       exitCode = Integer.parseInt(result[0]);
     } catch (NumberFormatException e) {
-      throw new IllegalStateException("Некорректный код завершения команды `" + COMMAND + "`: " + result[0], e);
+      throw new IllegalStateException("Некорректный код завершения команды `"
+          + COMMAND + "`: " + result[0], e);
     }
 
     if (exitCode == 0) {

@@ -1,6 +1,7 @@
 package io.github.ganenkovna.ssh.commands.ip.a.dto.base;
 
 import static io.github.ganenkovna.util.StringUtils.normalizeForDto;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 import io.github.ganenkovna.util.StringUtils;
 import io.github.ganenkovna.util.ip.MtuValidation;
@@ -119,11 +120,12 @@ public final class InterfaceBaseConfigDto {
    *
    * @param name имя интерфейса
    * @throws NullPointerException если {@code name == null}
-   * @throws IllegalArgumentException если строка пустая после trim() или не соответствует требованиям
+   * @throws IllegalArgumentException если строка пустая после trim()
+   *                                  или не соответствует требованиям
    * @see StringUtils#normalizeForDto(String, String)
    */
   public void setName(String name) {
-    name = normalizeForDto(name,"Имя интерфейса");
+    name = normalizeForDto(name, "Имя интерфейса");
 
     if (!name.matches("^(?![-\\d])[A-Za-z0-9_-]{1,16}$")
         || name.equalsIgnoreCase("all")
@@ -148,7 +150,7 @@ public final class InterfaceBaseConfigDto {
    * @see StringUtils#normalizeForDto(String, String)
    */
   public void setNameWithoutValidation(String name) {
-    this.name = normalizeForDto(name,"Имя интерфейса");
+    this.name = normalizeForDto(name, "Имя интерфейса");
   }
 
   /**
@@ -222,7 +224,7 @@ public final class InterfaceBaseConfigDto {
    * @see StringUtils#normalizeForDto(String, String)
    */
   public void setMaster(String master) {
-    this.master = normalizeForDto(master,"Родительский интерфейс (master)");
+    this.master = normalizeForDto(master, "Родительский интерфейс (master)");
   }
 
   /**
@@ -245,7 +247,7 @@ public final class InterfaceBaseConfigDto {
    * @see StringUtils#normalizeForDto(String, String)
    */
   public void setGroup(String group) {
-    this.group = normalizeForDto(group,"Группа интерфейсов (group)");
+    this.group = normalizeForDto(group, "Группа интерфейсов (group)");
   }
 
   /**
@@ -272,7 +274,7 @@ public final class InterfaceBaseConfigDto {
    */
   public void addUnknownParam(String unknownParam) {
     unknownParams.add(
-        normalizeForDto(unknownParam,"Базовый параметр сетевого интерфейса"));
+        normalizeForDto(unknownParam, "Базовый параметр сетевого интерфейса"));
   }
 
   /**

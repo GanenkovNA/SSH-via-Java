@@ -17,7 +17,7 @@ import java.util.regex.Pattern;
  * <p>Класс не предназначен для инстанцирования.</p>
  *
  * @see <a href="https://www.ecma-international.org/publications-and-standards/standards/ecma-48/">
- * ECMA-48 / ISO 6429 — Control Functions for Coded Character Sets</a>
+ *     ECMA-48 / ISO 6429 — Control Functions for Coded Character Sets</a>
  */
 public final class ParsersTokens {
   /** Запрет инстанцирования. */
@@ -35,7 +35,7 @@ public final class ParsersTokens {
    * <p>Не охватывает OSC, DCS и двухсимвольные ESC-команды.</p>
    *
    * @see <a href="https://www.ecma-international.org/publications-and-standards/standards/ecma-48/">
-   * ECMA-48 — описание управляющих последовательностей</a>
+   *     ECMA-48 — описание управляющих последовательностей</a>
    */
   public static final Pattern ANSI_ESC =
       Pattern.compile("\u001B\\[[0-?]*[ -/]*[@-~]");

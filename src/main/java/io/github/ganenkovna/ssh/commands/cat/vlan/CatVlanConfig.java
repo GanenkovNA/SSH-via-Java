@@ -30,17 +30,19 @@ public final class CatVlanConfig {
   }
 
   /**
-   * Выполняет {@code cat /proc/net/vlan/config} на удалённом хосте и возвращает список VLAN-интерфейсов.
+   * Выполняет {@code cat /proc/net/vlan/config} на удалённом хосте
+   * и возвращает список VLAN-интерфейсов.
    *
    * @param session активная SSH-сессия; не {@code null}
    * @return неизменяемый список интерфейсов; никогда не {@code null}, может быть пустым
    * @throws NullPointerException если {@code session == null}
    * @throws IllegalStateException если:
-   *   <ul>
-   *     <li>ответ от {@link SshChannel#execChannel(String)} некорректен (меньше 3 элементов);</li>
-   *     <li>код завершения команды не равен нулю;</li>
-   *     <li>код завершения не удалось распарсить как число.</li>
-   *   </ul>
+   *     <ul>
+   *         <li>ответ от {@link SshChannel#execChannel(String)} некорректен
+   *             (меньше 3 элементов);</li>
+   *         <li>код завершения команды не равен нулю;</li>
+   *         <li>код завершения не удалось распарсить как число.</li>
+   *     </ul>
    */
   public static List<VlanInterfaceDto> showVlanConfig(Session session) {
     Objects.requireNonNull(session);
@@ -49,14 +51,16 @@ public final class CatVlanConfig {
 
     if (result == null || result.length < 3) {
       throw new IllegalStateException(
-          "Некорректный ответ от execChannel для `" + COMMAND + "`: ожидается [exit, stdout, stderr]");
+          "Некорректный ответ от execChannel для `" + COMMAND
+              + "`: ожидается [exit, stdout, stderr]");
     }
 
     final int exitCode;
     try {
       exitCode = Integer.parseInt(result[0]);
     } catch (NumberFormatException e) {
-      throw new IllegalStateException("Некорректный код завершения команды `" + COMMAND + "`: " + result[0], e);
+      throw new IllegalStateException("Некорректный код завершения команды `" + COMMAND
+          + "`: " + result[0], e);
     }
 
     if (exitCode == 0) {

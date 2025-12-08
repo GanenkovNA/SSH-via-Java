@@ -1,6 +1,7 @@
 package io.github.ganenkovna.ssh.commands.ip.a.dto.addr.v4;
 
 import static io.github.ganenkovna.util.StringUtils.normalizeForEnum;
+
 import io.github.ganenkovna.util.StringUtils;
 
 /**
@@ -67,14 +68,16 @@ public enum IpV4AddressFlag {
   /**
    * Проверяет валидность строкового представления флага IPv4.
    *
-   * <p>Перед проверкой выполняется нормализация в {@link StringUtils#normalizeForEnum(String, String)}.</p>
+   * <p>Перед проверкой выполняется нормализация
+   * в {@link StringUtils#normalizeForEnum(String, String)}.</p>
    *
    * <p>Возвращает {@code true}, если после нормализации значение найдено;
    * возвращает {@code false}, если {@code input == null}, строка пустая после trim()
    * или такой области не существует.</p>
    *
    * @param input строка для проверки (может быть null)
-   * @return {@code true}, если строка соответствует одному из значений перечисления; иначе {@code false}
+   * @return {@code true}, если строка соответствует одному из значений перечисления;
+   *         иначе {@code false}
    * @see StringUtils#normalizeForEnum(String, String)
    */
   public static boolean isValid(String input) {
@@ -88,7 +91,8 @@ public enum IpV4AddressFlag {
   }
 
   /**
-   * Возвращает элемент перечисления по строковому представлению (без учёта регистра и с заменой '-'→'_').
+   * Возвращает элемент перечисления по строковому представлению
+   * (без учёта регистра и с заменой '-'→'_').
    *
    * <p>Нормализация идентична {@link StringUtils#normalizeForEnum(String, String)}.</p>
    *

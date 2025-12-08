@@ -2,6 +2,7 @@ package io.github.ganenkovna.ssh.commands.ip.a.service;
 
 import static io.github.ganenkovna.ssh.commands.ip.a.service.ParserTokens.BROADCAST_KEYS;
 import static io.github.ganenkovna.ssh.commands.ip.a.service.ParserTokens.INDEX_PATTERN;
+
 import java.util.List;
 
 /**
@@ -114,7 +115,7 @@ public final class ParserUtils {
     return INDEX_PATTERN.matcher(line).lookingAt();
   }
 
-  public static boolean isBroadcastKey(String key){
+  public static boolean isBroadcastKey(String key) {
     return BROADCAST_KEYS.contains(key.toLowerCase());
   }
 }

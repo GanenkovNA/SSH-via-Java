@@ -73,14 +73,17 @@ public enum InterfaceFlag {
 
   /**
    * Драйвер активен (флаг IFF_RUNNING).
-   * Отличается от UP (может быть RUNNING без UP). В современных выводах iproute2 чаще ориентируются на {@link #LOWER_UP}.
+   * Отличается от UP (может быть RUNNING без UP).
+   * В современных выводах iproute2 чаще ориентируются на {@link #LOWER_UP}.
    */
   RUNNING,
 
   /**
    * Нет несущего сигнала.
-   * <p><b>Не является</b> флагом {@code IFF_*}; это операционное состояние,
-   * которое отображается как {@code NO-CARRIER} в выводе {@code ip link} при отсутствии carrier.</p>
+   *
+   * <p><b>Не является</b> флагом {@code IFF_*}; это операционное состояние, которое
+   * отображается как {@code NO-CARRIER} в выводе {@code ip link} при отсутствии carrier.</p>
+   *
    * @deprecated Не относится к {@code IFF_*}. Используйте {@link #LOWER_UP} для признака линка.
    */
   @Deprecated
@@ -101,7 +104,8 @@ public enum InterfaceFlag {
   /**
    * Проверяет существование указанного флага интерфейса.
    *
-   * <p>Перед проверкой выполняется нормализация в {@link StringUtils#normalizeForEnum(String, String)}.</p>
+   * <p>Перед проверкой выполняется нормализация
+   * в {@link StringUtils#normalizeForEnum(String, String)}.</p>
    *
    * <p>Возвращает {@code true}, если после нормализации значение найдено;
    * возвращает {@code false}, если {@code input == null}, строка пустая после trim()

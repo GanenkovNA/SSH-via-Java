@@ -1,6 +1,7 @@
 package io.github.ganenkovna.ssh.commands.ip.a.dto.addr;
 
 import static io.github.ganenkovna.util.StringUtils.normalizeForDto;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 import io.github.ganenkovna.util.StringUtils;
 import java.util.ArrayList;
@@ -12,7 +13,8 @@ import lombok.Setter;
 /**
  * Параметры времени жизни IP-адреса (IPv4/IPv6).
  *
- * <p>Определяет срок действия адреса до его устаревания (preferred) и полной недействительности (valid).</p>
+ * <p>Определяет срок действия адреса до его устаревания (preferred)
+ * и полной недействительности (valid).</p>
  *
  * <p>Поддерживаются человекочитаемые строковые значения, например:
  * <ul>
@@ -23,8 +25,10 @@ import lombok.Setter;
  *
  * <p><b>Важно:</b> данный DTO выполняет только базовую нормализацию строк
  * (через {@link StringUtils#normalizeForDto(String, String)}):
- * {@code trim()} и проверки на {@code null}/{@code empty}. Семантическая проверка форматов и соотношений
- * значений (например, сравнение {@code preferred} и {@code valid}) вне области ответственности этого класса.</p>
+ * {@code trim()} и проверки на {@code null}/{@code empty}.
+ * Семантическая проверка форматов и соотношений значений
+ * (например, сравнение {@code preferred} и {@code valid})
+ * вне области ответственности этого класса.</p>
  */
 @Data
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
@@ -59,7 +63,7 @@ public final class LifeTimeParamsDto {
    * @see <a href="https://www.rfc-editor.org/rfc/rfc4862#section-5.5.4">RFC 4862 §5.5.4</a>
    */
   public void setValidLft(String validLft) {
-    this.validLft = normalizeForDto(validLft,"validLft")
+    this.validLft = normalizeForDto(validLft, "validLft")
         .toLowerCase();
   }
 
@@ -80,7 +84,7 @@ public final class LifeTimeParamsDto {
    * @see <a href="https://www.kernel.org/doc/html/latest/networking/ip-sysctl.html">IP sysctl</a>
    */
   public void setPreferredLft(String preferredLft) {
-    this.preferredLft = normalizeForDto(preferredLft,"preferredLft")
+    this.preferredLft = normalizeForDto(preferredLft, "preferredLft")
         .toLowerCase();
   }
 
@@ -97,7 +101,7 @@ public final class LifeTimeParamsDto {
    */
   public void addUnknownParam(String unknownParam) {
     unknownParams.add(
-        normalizeForDto(unknownParam,"Параметр времени жизни IP-адреса"));
+        normalizeForDto(unknownParam, "Параметр времени жизни IP-адреса"));
   }
 
   /**

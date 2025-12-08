@@ -1,6 +1,7 @@
 package io.github.ganenkovna.ssh.commands.cat.vlan.utils;
 
 import static io.github.ganenkovna.util.StringUtils.normalizeForDto;
+
 import com.jcraft.jsch.Session;
 import io.github.ganenkovna.ssh.commands.cat.vlan.CatVlanConfig;
 import io.github.ganenkovna.ssh.commands.cat.vlan.dto.VlanInterfaceDto;
@@ -46,13 +47,13 @@ public final class CatVlanConfigTestSupport {
    * @see VlanInterfaceDto
    * @see VlanValidation#validateVlanId(int)
    */
-  public static boolean vlanInterfaceExists(Session session, String interfaceName, int vlanId){
+  public static boolean vlanInterfaceExists(Session session, String interfaceName, int vlanId) {
     Objects.requireNonNull(session, "SSH-сессия не может быть null");
     interfaceName = normalizeForDto(interfaceName, "Название интерфейса");
     VlanValidation.validateVlanId(vlanId);
 
     List<VlanInterfaceDto> vlanInterfaces = CatVlanConfig.showVlanConfig(session);
-    for(VlanInterfaceDto it : vlanInterfaces){
+    for (VlanInterfaceDto it : vlanInterfaces) {
       if (interfaceName.equalsIgnoreCase(it.interfaceName())
           && vlanId == it.vlanId()) {
         return true;

@@ -111,7 +111,8 @@ public enum QdiscType {
   /**
    * Проверяет существование указанной дисциплины очереди.
    *
-   * <p>Перед проверкой выполняется нормализация в {@link StringUtils#normalizeForEnum(String, String)}.</p>
+   * <p>Перед проверкой выполняется нормализация
+   * в {@link StringUtils#normalizeForEnum(String, String)}.</p>
    *
    * <p>Возвращает {@code true}, если после нормализации значение найдено;
    * возвращает {@code false}, если {@code input == null}, строка пустая после trim()
@@ -143,7 +144,7 @@ public enum QdiscType {
    * @see StringUtils#normalizeForEnum(String, String)
    */
   public static QdiscType getIgnoreCase(String input) {
-    input = StringUtils.normalizeForEnum(input,"qdisc");
+    input = StringUtils.normalizeForEnum(input, "qdisc");
     try {
       return QdiscType.valueOf(input);
     } catch (IllegalArgumentException e) {

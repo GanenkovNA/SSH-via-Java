@@ -13,7 +13,7 @@ import static io.github.ganenkovna.util.parser.ParsersTokens.ANSI_ESC;
  *
  * @see ParsersTokens
  * @see <a href="https://www.ecma-international.org/publications-and-standards/standards/ecma-48/">
- * ECMA-48 / ISO 6429 — Control Functions for Coded Character Sets</a>
+ *     ECMA-48 / ISO 6429 — Control Functions for Coded Character Sets</a>
  */
 public final class ParsersUtils {
   /** Запрет инстанцирования. */
@@ -31,7 +31,7 @@ public final class ParsersUtils {
    *
    * @see ParsersTokens
    * @see <a href="https://www.ecma-international.org/publications-and-standards/standards/ecma-48/">
-   * ECMA-48 / ISO 6429 — Control Functions for Coded Character Sets</a>
+   *      ECMA-48 / ISO 6429 — Control Functions for Coded Character Sets</a>
    */
   public static String stripAnsi(String s) {
     s = requireNonBlank(s, "Строка");

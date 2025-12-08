@@ -1,6 +1,7 @@
 package io.github.ganenkovna.util.ip;
 
 import static io.github.ganenkovna.util.StringUtils.normalizeForDto;
+
 import io.github.ganenkovna.util.StringUtils;
 
 /**
@@ -39,8 +40,8 @@ public final class PortValidation {
    * @return {@code true}, если порт находится в диапазоне
    * @throws IllegalArgumentException если порт вне диапазона {@code 0..65535}
    */
-  public static boolean validatePort(int port){
-    if (port < PORT_MIN_VALUE || port > PORT_MAX_VALUE){
+  public static boolean validatePort(int port) {
+    if (port < PORT_MIN_VALUE || port > PORT_MAX_VALUE) {
       throw new IllegalArgumentException("Недопустимое значение порта: " + port
           + " (ожидается 0..65535)");
     }
@@ -63,11 +64,11 @@ public final class PortValidation {
    *
    * @throws NullPointerException если {@code port == null}
    * @throws IllegalArgumentException если строка содержит недопустимые символы,
-   * не является корректным числовым значением или содержит значение вне диапазона
+   *         не является корректным числовым значением или содержит значение вне диапазона
    */
-  public static boolean validatePort(String port){
+  public static boolean validatePort(String port) {
     port = normalizeForDto(port, "Порт");
-    if(!port.matches("\\d+")){
+    if (!port.matches("\\d+")) {
       throw new IllegalArgumentException("Порт должен содержать только цифры: " + port);
     }
 

@@ -1,6 +1,7 @@
 package io.github.ganenkovna.ssh.commands.cat.vlan.service;
 
 import static io.github.ganenkovna.ssh.commands.ip.a.service.ParserUtils.trimOutputStrings;
+
 import io.github.ganenkovna.ssh.commands.cat.vlan.dto.VlanInterfaceDto;
 import io.github.ganenkovna.util.ip.VlanValidation;
 import io.github.ganenkovna.util.parser.ParsersUtils;
@@ -38,7 +39,7 @@ public final class VlanConfigParser {
    * @throws NumberFormatException если значение VLAN-ID не является числом
    * @implNote Диапазон VLAN-ID проверяется в {@link VlanValidation#validateVlanId(int)}.
    */
-  public static List<VlanInterfaceDto> parseOutput(String vlanConfigOutput){
+  public static List<VlanInterfaceDto> parseOutput(String vlanConfigOutput) {
     // Проверка вывода команды на пустую строку
     Objects.requireNonNull(vlanConfigOutput, "Вывод команды `" + COMMAND + "` не может быть null");
     // На случай, если цвет не был отключён на стороне вызова
@@ -50,15 +51,15 @@ public final class VlanConfigParser {
     final String[] lines = trimOutputStrings(vlanConfigOutput);
     final List<VlanInterfaceDto> vlanInterfaces = new ArrayList<>();
 
-    for (String line : lines){
+    for (String line : lines) {
       line = line.trim();
 
-      if (line.isBlank() || ParserTokens.SERVICE_LINE.matcher(line).matches()){
+      if (line.isBlank() || ParserTokens.SERVICE_LINE.matcher(line).matches()) {
         continue;
       }
 
       Matcher m = ParserTokens.DATA_LINE.matcher(line);
-      if (m.matches()){
+      if (m.matches()) {
         vlanInterfaces.add(
             new VlanInterfaceDto(
                 m.group(1),

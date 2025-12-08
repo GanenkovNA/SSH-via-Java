@@ -1,6 +1,7 @@
 package io.github.ganenkovna.ssh.host.dto;
 
 import static io.github.ganenkovna.util.StringUtils.normalizeForDto;
+
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.github.ganenkovna.util.StringUtils;
@@ -35,7 +36,7 @@ public record HostConnectionConfigDTO(
       @JsonProperty("username") String username,
       @JsonProperty("password") String password
   ) {
-    //host
+    // host
     this.host = normalizeForDto(host, "host");
 
     // port

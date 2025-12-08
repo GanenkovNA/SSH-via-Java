@@ -1,20 +1,27 @@
 package io.github.ganenkovna.ssh.host.dto;
 
 import static io.github.ganenkovna.util.StringUtils.normalizeForDto;
-import io.github.ganenkovna.util.StringUtils;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import io.github.ganenkovna.ssh.commands.ip.a.dto.InterfaceDto;
 import io.github.ganenkovna.ssh.commands.ip.a.dto.addr.v4.InterfaceIpv4ConfigDto;
 import io.github.ganenkovna.ssh.commands.ip.a.dto.addr.v6.InterfaceIpv6ConfigDto;
+import io.github.ganenkovna.util.StringUtils;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.regex.Pattern;
 import lombok.Getter;
 
 /**
  * Конфигурация интерфейсов хоста.
  *
- * <p>Хранит имя management-интерфейса и набор «рабочих» интерфейсов в виде {@link HostInterfaceDTO}.
+ * <p>Хранит имя management-интерфейса и набор «рабочих» интерфейсов
+ * в виде {@link HostInterfaceDTO}.
  * {@code mgmtInterface} — строго не {@code null} и не пустая/пробельная строка
  * (нормализация выполняется в {@link StringUtils#normalizeForDto(String, String)}).
  * Коллекция {@code hostInterfaces} — никогда не {@code null}, может быть пустой; наружу не
@@ -30,7 +37,8 @@ import lombok.Getter;
  *
  * <p>JSON-де/сериализация:</p>
  * <ul>
- *   <li>используется конструктор с {@code @JsonCreator}; поле {@code mgmtInterface} — обязательное;</li>
+ *   <li>используется конструктор с {@code @JsonCreator};
+ *       поле {@code mgmtInterface} — обязательное;</li>
  *   <li>лишние поля в JSON запрещены ({@code ignoreUnknown = false});</li>
  *   <li>{@code hostInterfaces} читается/пишется как массив объектов {@link HostInterfaceDTO};</li>
  *   <li>для стабильного вывода задан порядок полей {@code mgmtInterface → hostInterfaces}.</li>
@@ -40,14 +48,14 @@ import lombok.Getter;
  * @see HostInterfacesSnapshot
  * @see StringUtils#normalizeForDto(String, String)
  */
-@com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_EMPTY)
-@com.fasterxml.jackson.annotation.JsonPropertyOrder({ "mgmtInterface", "hostInterfaces" })
-@com.fasterxml.jackson.annotation.JsonIgnoreProperties(ignoreUnknown = false)
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
+@JsonPropertyOrder({ "mgmtInterface", "hostInterfaces" })
+@JsonIgnoreProperties(ignoreUnknown = false)
 public class HostInterfacesConfigDTO {
   private static final String LOOPBACK_LINK_TYPE = "loopback";
   @Getter
   private String mgmtInterface;
-  @com.fasterxml.jackson.annotation.JsonProperty("hostInterfaces")
+  @JsonProperty("hostInterfaces")
   private final List<HostInterfaceDTO> hostInterfaces = new ArrayList<>();
 
   public HostInterfacesConfigDTO(List<InterfaceDto> parsedInterfaces, String hostIp) {
@@ -55,12 +63,12 @@ public class HostInterfacesConfigDTO {
     Objects.requireNonNull(parsedInterfaces, "parsedInterfaces == null");
     boolean mgmtAssigned = false;
 
-    for (InterfaceDto parsedInterface : parsedInterfaces){
-      if (parsedInterface == null){
+    for (InterfaceDto parsedInterface : parsedInterfaces) {
+      if (parsedInterface == null) {
         continue;
       }
 
-      if (isLoopback(parsedInterface)){
+      if (isLoopback(parsedInterface)) {
         continue;
       }
 
@@ -68,13 +76,13 @@ public class HostInterfacesConfigDTO {
           .getInterfaceParams().getName();
       boolean isMgmtHere = false;
 
-      if (!mgmtAssigned && interfaceHasRequiredIp(parsedInterface, hostIp)){
+      if (!mgmtAssigned && interfaceHasRequiredIp(parsedInterface, hostIp)) {
         setMgmtInterface(interfaceName);
         mgmtAssigned = true;
         isMgmtHere = true;
       }
 
-      if (!isMgmtHere){
+      if (!isMgmtHere) {
         addInterface(interfaceName);
       }
     }
@@ -88,22 +96,26 @@ public class HostInterfacesConfigDTO {
   /**
    * JSON-конструктор конфигурации.
    *
-   * <p>{@code mgmtInterface} обязателен и нормализуется; {@code hostInterfaces} может быть {@code null}
-   * или пустым. Элементы списка проверяются на {@code null} и дубликаты имён; при наличии дубликата
-   * создаётся исключение.</p>
+   * <p>{@code mgmtInterface} обязателен и нормализуется;
+   * {@code hostInterfaces} может быть {@code null} или пустым.
+   * Элементы списка проверяются на {@code null} и дубликаты имён;
+   * при наличии дубликата создаётся исключение.</p>
    *
-   * @param mgmtInterface имя management-интерфейса; строго не {@code null} и не пустое после {@code trim()}
+   * @param mgmtInterface имя management-интерфейса;
+   *                      строго не {@code null} и не пустое после {@code trim()}
    * @param hostInterfaces список интерфейсов; может быть {@code null} или пустым
-   * @throws NullPointerException если {@code mgmtInterface == null} или встречен {@code null}-элемент в {@code hostInterfaces}
-   * @throws IllegalArgumentException если {@code mgmtInterface} пустая/пробельная строка либо обнаружен дубликат имени интерфейса
-   * @see com.fasterxml.jackson.annotation.JsonCreator
+   * @throws NullPointerException если {@code mgmtInterface == null}
+   *                              или встречен {@code null}-элемент в {@code hostInterfaces}
+   * @throws IllegalArgumentException если {@code mgmtInterface} пустая/пробельная строка
+   *                                  либо обнаружен дубликат имени интерфейса
+   * @see JsonCreator
    * @see HostInterfaceDTO
    * @see StringUtils#normalizeForDto(String, String)
    */
-  @com.fasterxml.jackson.annotation.JsonCreator
+  @JsonCreator
   public HostInterfacesConfigDTO(
-      @com.fasterxml.jackson.annotation.JsonProperty(value = "mgmtInterface", required = true) String mgmtInterface,
-      @com.fasterxml.jackson.annotation.JsonProperty("hostInterfaces") List<HostInterfaceDTO> hostInterfaces
+      @JsonProperty(value = "mgmtInterface", required = true) String mgmtInterface,
+      @JsonProperty("hostInterfaces") List<HostInterfaceDTO> hostInterfaces
   ) {
     setMgmtInterface(mgmtInterface); // нормализация + NPE/IAE
     if (hostInterfaces != null) {
@@ -111,7 +123,8 @@ public class HostInterfacesConfigDTO {
         Objects.requireNonNull(dto, "hostInterfaces содержит null-элемент");
         // запрет дублей по имени
         if (indexOfInterfaceByName(dto.getInterfaceName()) >= 0) {
-          throw new IllegalArgumentException("Дубликат интерфейса: \"" + dto.getInterfaceName() + '"');
+          throw new IllegalArgumentException("Дубликат интерфейса: \""
+              + dto.getInterfaceName() + '"');
         }
         this.hostInterfaces.add(dto);
       }
@@ -121,29 +134,33 @@ public class HostInterfacesConfigDTO {
   /**
    * Устанавливает имя management-интерфейса.
    *
-   * <p>Строка нормализуется (обрезка пробелов, проверка на пустоту) и сохраняется в каноническом виде.</p>
+   * <p>Строка нормализуется (обрезка пробелов, проверка на пустоту)
+   * и сохраняется в каноническом виде.</p>
    *
    * @param mgmtInterface имя интерфейса; строго не {@code null} и не пустое после {@code trim()}
    * @throws NullPointerException если {@code mgmtInterface == null}
-   * @throws IllegalArgumentException если {@code mgmtInterface} пустая/пробельная после {@code trim()}
+   * @throws IllegalArgumentException если {@code mgmtInterface} пустая/пробельная
+   *                                  после {@code trim()}
    * @see StringUtils#normalizeForDto(String, String)
    */
-  public void setMgmtInterface(String mgmtInterface){
+  public void setMgmtInterface(String mgmtInterface) {
     this.mgmtInterface = normalizeForDto(mgmtInterface, "Management-интерфейс");
   }
 
   /**
    * Добавляет интерфейс в конфигурацию.
    *
-   * <p>Имя нормализуется; при попытке добавить интерфейс с уже существующим именем выбрасывается исключение.</p>
+   * <p>Имя нормализуется;
+   * при попытке добавить интерфейс с уже существующим именем выбрасывается исключение.</p>
    *
    * @param interfaceName имя интерфейса; строго не {@code null} и не пустое после {@code trim()}
    * @throws NullPointerException если {@code interfaceName == null}
-   * @throws IllegalArgumentException если {@code interfaceName} пустая/пробельная либо интерфейс с таким именем уже существует
+   * @throws IllegalArgumentException если {@code interfaceName} пустая/пробельная
+   *                                  либо интерфейс с таким именем уже существует
    * @see HostInterfaceDTO
    * @see StringUtils#normalizeForDto(String, String)
    */
-  public void addInterface (String interfaceName) {
+  public void addInterface(String interfaceName) {
     interfaceName = normalizeForDto(interfaceName, "Имя интерфейса");
 
     if (indexOfInterfaceByName(interfaceName) >= 0) {
@@ -155,13 +172,16 @@ public class HostInterfacesConfigDTO {
   /**
    * Добавляет тест в список «не откатилось» для указанного интерфейса.
    *
-   * <p>Метод строгий: интерфейс должен существовать. И имя интерфейса, и название теста нормализуются;
-   * повторное добавление того же теста не изменяет состояние (идемпотентность на уровне {@link HostInterfaceDTO}).</p>
+   * <p>Метод строгий: интерфейс должен существовать.
+   * И имя интерфейса, и название теста нормализуются;
+   * повторное добавление того же теста не изменяет состояние
+   * (идемпотентность на уровне {@link HostInterfaceDTO}).</p>
    *
    * @param interfaceName имя интерфейса; строго не {@code null} и не пустое после {@code trim()}
    * @param test название теста; строго не {@code null} и не пустое после {@code trim()}
    * @throws NullPointerException если любой из параметров {@code null}
-   * @throws IllegalArgumentException если любой из параметров пустой/пробельный либо интерфейс не существует
+   * @throws IllegalArgumentException если любой из параметров пустой/пробельный
+   *                                  либо интерфейс не существует
    * @see HostInterfaceDTO#addFailedTest(String)
    * @see StringUtils#normalizeForDto(String, String)
    */
@@ -180,12 +200,14 @@ public class HostInterfacesConfigDTO {
   /**
    * Удаляет интерфейс по имени.
    *
-   * <p>Имя нормализуется. Если интерфейс не найден — выбрасывается исключение. Значение
-   * {@code mgmtInterface} умышленно не изменяется, даже если совпадает по имени с удалённым интерфейсом.</p>
+   * <p>Имя нормализуется. Если интерфейс не найден — выбрасывается исключение.
+   * Значение {@code mgmtInterface} умышленно не изменяется,
+   * даже если совпадает по имени с удалённым интерфейсом.</p>
    *
    * @param interfaceName имя интерфейса; строго не {@code null} и не пустое после {@code trim()}
    * @throws NullPointerException если {@code interfaceName == null}
-   * @throws IllegalArgumentException если {@code interfaceName} пустая/пробельная или интерфейс отсутствует в конфигурации
+   * @throws IllegalArgumentException если {@code interfaceName} пустая/пробельная
+   *                                  или интерфейс отсутствует в конфигурации
    * @see StringUtils#normalizeForDto(String, String)
    */
   public void removeInterfaceByName(String interfaceName) {
@@ -209,7 +231,7 @@ public class HostInterfacesConfigDTO {
    * @return неизменяемый список снимков; никогда не {@code null}, может быть пустым
    * @see HostInterfacesSnapshot
    */
-  @com.fasterxml.jackson.annotation.JsonIgnore
+  @JsonIgnore
   public List<HostInterfacesSnapshot> getInterfaceSnapshots() {
     List<HostInterfacesSnapshot> out = new ArrayList<>(hostInterfaces.size());
     for (HostInterfaceDTO it : hostInterfaces) {
@@ -219,12 +241,12 @@ public class HostInterfacesConfigDTO {
   }
 
 
-  private int indexOfInterfaceByName(String normalizedName){
+  private int indexOfInterfaceByName(String normalizedName) {
     Objects.requireNonNull(normalizedName, "normalizedName не может быть null");
 
     for (int i = 0; i < hostInterfaces.size(); i++) {
       HostInterfaceDTO it = hostInterfaces.get(i);
-      if (it != null && normalizedName.equals(it.getInterfaceName())){
+      if (it != null && normalizedName.equals(it.getInterfaceName())) {
         return i;
       }
     }
@@ -233,25 +255,25 @@ public class HostInterfacesConfigDTO {
 
   private static boolean interfaceHasRequiredIp(InterfaceDto itf, String requiredIp) {
     // IPv4
-    if (itf.getIpv4() != null){
-      for (InterfaceIpv4ConfigDto ip4 : itf.getIpv4()){
-        if (ip4 == null){
+    if (itf.getIpv4() != null) {
+      for (InterfaceIpv4ConfigDto ip4 : itf.getIpv4()) {
+        if (ip4 == null) {
           continue;
         }
         final String address = ip4.getAddress();
-        if (requiredIp.equals(address)){
+        if (requiredIp.equals(address)) {
           return true;
         }
       }
     }
     // IPv6
-    if (itf.getIpv6() != null){
-      for (InterfaceIpv6ConfigDto ip6 : itf.getIpv6()){
-        if (ip6 == null){
+    if (itf.getIpv6() != null) {
+      for (InterfaceIpv6ConfigDto ip6 : itf.getIpv6()) {
+        if (ip6 == null) {
           continue;
         }
         final String address = ip6.getAddress();
-        if (requiredIp.equals(address)){
+        if (requiredIp.equals(address)) {
           return true;
         }
       }
@@ -259,7 +281,7 @@ public class HostInterfacesConfigDTO {
     return false;
   }
 
-  private static boolean isLoopback(InterfaceDto interfaceDto){
+  private static boolean isLoopback(InterfaceDto interfaceDto) {
     Objects.requireNonNull(interfaceDto, "interfaceDto == null");
     String linkType = normalizeForDto(
         interfaceDto.getInterfacePhysicalParams().getLinkType(),

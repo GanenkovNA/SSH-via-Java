@@ -1,11 +1,12 @@
 package io.github.ganenkovna.ssh.client;
 
 import static io.github.ganenkovna.util.StringUtils.requireNonBlank;
-import io.github.ganenkovna.ssh.host.dto.HostConfigDTO;
-import io.github.ganenkovna.ssh.host.dto.HostConnectionConfigDTO;
+
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
+import io.github.ganenkovna.ssh.host.dto.HostConfigDTO;
+import io.github.ganenkovna.ssh.host.dto.HostConnectionConfigDTO;
 import java.util.Objects;
 import lombok.Getter;
 
@@ -59,7 +60,8 @@ public final class SshSession {
    * Создаёт менеджер SSH-сессии из агрегированной конфигурации хоста.
    *
    * <p>Параметры подключения ({@code host}, {@code port}, {@code username}, {@code password})
-   * берутся из {@link HostConfigDTO#getConnectionConfig()} и считаются уже провалидированными на уровне DTO.</p>
+   * берутся из {@link HostConfigDTO#getConnectionConfig()}
+   * и считаются уже провалидированными на уровне DTO.</p>
    *
    * @param config агрегированная конфигурация хоста; строго не {@code null}
    * @throws NullPointerException если {@code config} равен {@code null}
@@ -83,10 +85,11 @@ public final class SshSession {
    * @param port порт SSH в диапазоне {@code 1..65535}
    * @param password пароль; строго не {@code null}, не пустой/пробельный
    * @throws NullPointerException если любой строковый параметр равен {@code null}
-   * @throws IllegalArgumentException если {@code username}/{@code host}/{@code password} пусты/пробельны
-   *                                  или {@code port} вне диапазона {@code 1..65535}
+   * @throws IllegalArgumentException если {@code username}/{@code host}/{@code password}
+   *                                  пусты/пробельны или
+   *                                  {@code port} вне диапазона {@code 1..65535}
    */
-  public SshSession(String username, String host, int port, String password){
+  public SshSession(String username, String host, int port, String password) {
     this.username = requireNonBlank(username, "Имя пользователя");
     this.host = requireNonBlank(host, "Адрес хоста (SSH-сервера)");
     this.port = port;
@@ -121,9 +124,10 @@ public final class SshSession {
           host,
           port);
 
-      if (password.isEmpty()){
+      if (password.isEmpty()) {
         throw new IllegalStateException(
-            "Key-based аутентификация ещё не реализована: password пустой; требуется непустой пароль");
+            "Key-based аутентификация ещё не реализована: "
+                + "password пустой; требуется непустой пароль");
       } else {
         session.setPassword(password);
       }
@@ -157,9 +161,9 @@ public final class SshSession {
   public void closeSession() {
     System.out.printf("Закрытие подключения к %s:%d как %s...%n",
         host, port, username);
-    if (session != null){
+    if (session != null) {
       try {
-        if (session.isConnected()){
+        if (session.isConnected()) {
           session.disconnect();
         }
       } finally {

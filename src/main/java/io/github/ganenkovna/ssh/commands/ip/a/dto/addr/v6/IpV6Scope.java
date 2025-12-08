@@ -1,6 +1,7 @@
 package io.github.ganenkovna.ssh.commands.ip.a.dto.addr.v6;
 
 import static io.github.ganenkovna.util.StringUtils.normalizeForEnum;
+
 import io.github.ganenkovna.util.StringUtils;
 
 /**
@@ -65,7 +66,8 @@ public enum IpV6Scope {
   /**
    * Проверяет существование указанной области видимости IPv6.
    *
-   * <p>Перед проверкой выполняется нормализация в {@link StringUtils#normalizeForEnum(String, String)}.</p>
+   * <p>Перед проверкой выполняется нормализация
+   * в {@link StringUtils#normalizeForEnum(String, String)}.</p>
    *
    * <p>Возвращает {@code true}, если после нормализации значение найдено;
    * возвращает {@code false}, если {@code input == null}, строка пустая после trim()
@@ -77,11 +79,11 @@ public enum IpV6Scope {
    */
   public static boolean isValid(String input) {
     try {
-        IpV6Scope.valueOf(
-                normalizeForEnum(input, "Область видимости IPv6-адреса"));
-        return true;
+      IpV6Scope.valueOf(
+          normalizeForEnum(input, "Область видимости IPv6-адреса"));
+      return true;
     } catch (NullPointerException | IllegalArgumentException e) {
-        return false;
+      return false;
     }
   }
 
@@ -97,12 +99,13 @@ public enum IpV6Scope {
    * @see StringUtils#normalizeForEnum(String, String)
    */
   public static IpV6Scope getIgnoreCase(String input) {
-    input = normalizeForEnum(input,"Область видимости IPv6-адреса");
+    input = normalizeForEnum(input, "Область видимости IPv6-адреса");
 
     try {
-        return IpV6Scope.valueOf(input);
+      return IpV6Scope.valueOf(input);
     } catch (IllegalArgumentException e) {
-        throw new IllegalArgumentException("Значение области видимости IPv6-адреса не найдено: " + input);
+      throw new IllegalArgumentException(
+          "Значение области видимости IPv6-адреса не найдено: " + input);
     }
   }
 }

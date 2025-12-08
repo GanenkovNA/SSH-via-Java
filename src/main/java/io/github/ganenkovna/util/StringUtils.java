@@ -7,10 +7,14 @@ import java.util.Objects;
  *
  * <p>Основные направления:</p>
  * <ul>
- *   <li>{@link #normalizeForDto(String, String, String)} — нормализация и валидация для DTO (кастомные сообщения);</li>
- *   <li>{@link #normalizeForDto(String, String)} — упрощённая перегрузка для DTO (дефолтные сообщения);</li>
- *   <li>{@link #normalizeForEnum(String, String, String)} — нормализация строк для {@code enum}-значений (кастомные сообщения);</li>
- *   <li>{@link #normalizeForEnum(String, String)} — упрощённая перегрузка для {@code enum} (дефолтные сообщения).</li>
+ *   <li>{@link #normalizeForDto(String, String, String)} —
+ *       нормализация и валидация для DTO (кастомные сообщения);</li>
+ *   <li>{@link #normalizeForDto(String, String)} —
+ *       упрощённая перегрузка для DTO (дефолтные сообщения);</li>
+ *   <li>{@link #normalizeForEnum(String, String, String)} —
+ *       нормализация строк для {@code enum}-значений (кастомные сообщения);</li>
+ *   <li>{@link #normalizeForEnum(String, String)} —
+ *       упрощённая перегрузка для {@code enum} (дефолтные сообщения).</li>
  * </ul>
  *
  * <p>Методы не модифицируют исходную строку и всегда возвращают новый объект.
@@ -26,7 +30,8 @@ public final class StringUtils {
   }
 
   /**
-   * Нормализует строку для использования в DTO с валидацией и пользовательскими сообщениями об ошибках.
+   * Нормализует строку для использования в DTO с валидацией
+   * и пользовательскими сообщениями об ошибках.
    *
    * <p>Выполняет:</p>
    * <ol>
@@ -37,18 +42,21 @@ public final class StringUtils {
    *
    * @param input строка для нормализации
    * @param nullErrorMessage сообщение для {@link NullPointerException}, если {@code input == null}
-   * @param emptyErrorMessage сообщение для {@link IllegalArgumentException}, если строка пуста после {@code trim()}
+   * @param emptyErrorMessage сообщение для {@link IllegalArgumentException},
+   *                          если строка пуста после {@code trim()}
    * @return нормализованная строка без ведущих и конечных пробелов
    * @throws NullPointerException если {@code input == null}
    * @throws IllegalArgumentException если строка пуста после {@code trim()}
    * @implNote Используется для валидации и нормализации строковых полей DTO.
    */
-  public static String normalizeForDto(String input, String nullErrorMessage, String emptyErrorMessage) {
+  public static String normalizeForDto(
+      String input, String nullErrorMessage, String emptyErrorMessage) {
     return requireNonBlank(input, nullErrorMessage, emptyErrorMessage);
   }
 
   /**
-   * Упрощённая версия {@link #normalizeForDto(String, String, String)} с дефолтными сообщениями об ошибках.
+   * Упрощённая версия {@link #normalizeForDto(String, String, String)}
+   * с дефолтными сообщениями об ошибках.
    *
    * <p>Сообщения формируются автоматически в формате:
    * {@code "Значение \"<имя_поля>\" не может быть null/пустым/пробельным"}.</p>
@@ -61,7 +69,7 @@ public final class StringUtils {
    *
    * @see #normalizeForDto(String, String, String)
    */
-  public static String normalizeForDto (String input, String stringName) {
+  public static String normalizeForDto(String input, String stringName) {
     return normalizeForDto(
         input,
         PREFIX + stringName + NULL_SUFFIX,
@@ -69,7 +77,8 @@ public final class StringUtils {
   }
 
   /**
-   * Нормализует строку для использования в {@code enum}-значениях с пользовательскими сообщениями об ошибках.
+   * Нормализует строку для использования в {@code enum}-значениях
+   * с пользовательскими сообщениями об ошибках.
    *
    * <p>Выполняет следующие шаги:</p>
    * <ol>
@@ -84,13 +93,15 @@ public final class StringUtils {
    *
    * @param input строка для нормализации
    * @param nullErrorMessage сообщение для {@link NullPointerException}, если {@code input == null}
-   * @param emptyErrorMessage сообщение для {@link IllegalArgumentException}, если строка пуста после {@code trim()}
+   * @param emptyErrorMessage сообщение для {@link IllegalArgumentException},
+   *                          если строка пуста после {@code trim()}
    * @return нормализованная строка в верхнем регистре с заменой {@code '-'} на {@code '_'}
    * @throws NullPointerException если {@code input == null}
    * @throws IllegalArgumentException если строка пуста после {@code trim()}
    * @see Enum#valueOf(Class, String)
    */
-  public static String normalizeForEnum(String input, String nullErrorMessage, String emptyErrorMessage) {
+  public static String normalizeForEnum(
+      String input, String nullErrorMessage, String emptyErrorMessage) {
     input = requireNonBlank(input, nullErrorMessage, emptyErrorMessage);
     return input
         .toUpperCase()
@@ -98,7 +109,8 @@ public final class StringUtils {
   }
 
   /**
-   * Упрощённая версия {@link #normalizeForEnum(String, String, String)} с дефолтными сообщениями об ошибках.
+   * Упрощённая версия {@link #normalizeForEnum(String, String, String)}
+   * с дефолтными сообщениями об ошибках.
    *
    * <p>Сообщения формируются автоматически в формате:
    * {@code "Значение \"<имя_поля>\" не может быть null/пустым/пробельным"}.</p>
@@ -112,7 +124,7 @@ public final class StringUtils {
    * @see #normalizeForEnum(String, String, String)
    * @see Enum#valueOf(Class, String)
    */
-  public static String normalizeForEnum(String input, String stringName){
+  public static String normalizeForEnum(String input, String stringName) {
     return normalizeForEnum(input,
         PREFIX + stringName + NULL_SUFFIX,
         PREFIX + stringName + EMPTY_SUFFIX);
@@ -129,7 +141,7 @@ public final class StringUtils {
    * @throws IllegalArgumentException если строка пуста после {@code trim()}
    * @see #requireNonBlank(String, String, String)
    */
-  public static String requireNonBlank(String input, String stringName){
+  public static String requireNonBlank(String input, String stringName) {
     return requireNonBlank(input,
         PREFIX + stringName + NULL_SUFFIX,
         PREFIX + stringName + EMPTY_SUFFIX);

@@ -1,6 +1,8 @@
 package io.github.ganenkovna.ssh.commands.cat.vlan.dto;
 
 import static io.github.ganenkovna.util.StringUtils.normalizeForDto;
+
+import io.github.ganenkovna.ssh.commands.cat.vlan.CatVlanConfig;
 import io.github.ganenkovna.util.StringUtils;
 import io.github.ganenkovna.util.ip.VlanValidation;
 
@@ -37,7 +39,7 @@ import io.github.ganenkovna.util.ip.VlanValidation;
  * @see io.github.ganenkovna.ssh.commands.cat.vlan.service.VlanConfigParser
  * @see io.github.ganenkovna.ssh.commands.cat.vlan.service.ParserTokens
  * @see VlanValidation#validateVlanId(int)
- * @see io.github.ganenkovna.ssh.commands.cat.vlan.CatVlanConfig#showVlanConfig(com.jcraft.jsch.Session)
+ * @see CatVlanConfig#showVlanConfig(com.jcraft.jsch.Session)
  */
 public record VlanInterfaceDto(String vlanInterfaceName, int vlanId, String interfaceName) {
   public VlanInterfaceDto(String vlanInterfaceName, int vlanId, String interfaceName) {

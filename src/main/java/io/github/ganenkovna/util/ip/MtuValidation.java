@@ -14,7 +14,7 @@ import java.util.Set;
  * <p>Метод {@link #validateMtu(int)} выполняет строгую проверку и выбрасывает
  * {@link IllegalArgumentException} при выходе за диапазон; метод
  * {@link #isMtuValid(int)} возвращает булев результат без исключений.</p>
-с *
+ *
  * <p>Методы принимают примитивный {@code int}, поэтому {@code null} не допускается.
  * Отрицательные и нулевые значения всегда считаются недопустимыми.</p>
  *
@@ -50,8 +50,8 @@ public final class MtuValidation {
    *                                  в список допустимых loopback-значений;
    *                                  сообщение содержит фактическое значение
    */
-  public static void validateMtu(int mtu){
-    if (!isMtuValid(mtu)){
+  public static void validateMtu(int mtu) {
+    if (!isMtuValid(mtu)) {
       throw new IllegalArgumentException(
           "Недопустимое значение MTU: " + mtu
               + ". Допустимые диапазоны: 68–9000 (обычные интерфейсы) "

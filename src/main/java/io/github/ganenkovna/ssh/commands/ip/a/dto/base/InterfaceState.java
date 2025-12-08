@@ -45,7 +45,8 @@ public enum InterfaceState {
   /**
    * Проверяет существование указанного состояния интерфейса.
    *
-   * <p>Перед проверкой выполняется нормализация в {@link StringUtils#normalizeForEnum(String, String)}.</p>
+   * <p>Перед проверкой выполняется нормализация
+   * в {@link StringUtils#normalizeForEnum(String, String)}.</p>
    *
    * <p>Возвращает {@code true}, если после нормализации значение найдено;
    * возвращает {@code false}, если {@code input == null}, строка пустая после trim()
@@ -77,7 +78,7 @@ public enum InterfaceState {
    * @see StringUtils#normalizeForEnum(String, String)
    */
   public static InterfaceState getIgnoreCase(String input) {
-    input = StringUtils.normalizeForEnum(input,"Состояние интерфейса");
+    input = StringUtils.normalizeForEnum(input, "Состояние интерфейса");
 
     try {
       return InterfaceState.valueOf(input);

@@ -1,6 +1,7 @@
 package io.github.ganenkovna.ssh.host.dto;
 
 import static io.github.ganenkovna.util.StringUtils.normalizeForDto;
+
 import io.github.ganenkovna.util.StringUtils;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,14 +27,16 @@ public record HostInterfacesSnapshot(String interfaceName, List<String> failedTe
   /**
    * Создаёт снимок с нормализацией имени и фиксацией неизменяемой копии списка тестов.
    *
-   * <p>Строка {@code interfaceName} нормализуется (обрезка пробелов, проверка на пустоту) и сохраняется
-   * в каноническом виде. Коллекция {@code failedTests} копируется в неизменяемый список
+   * <p>Строка {@code interfaceName} нормализуется (обрезка пробелов, проверка на пустоту)
+   * и сохраняется в каноническом виде.
+   * Коллекция {@code failedTests} копируется в неизменяемый список
    * (см. {@link java.util.List#copyOf(java.util.Collection)}); порядок элементов сохраняется.</p>
    *
    * @param interfaceName имя интерфейса; строго не {@code null} и не пустое после {@code trim()}
    * @param failedTests список названий тестов; никогда не {@code null}, может быть пустым
    * @throws NullPointerException если {@code interfaceName == null} или {@code failedTests == null}
-   * @throws IllegalArgumentException если {@code interfaceName} пустая/пробельная после {@code trim()}
+   * @throws IllegalArgumentException если {@code interfaceName} пустая/пробельная
+   *                                  после {@code trim()}
    * @see StringUtils#normalizeForDto(String, String)
    */
   public HostInterfacesSnapshot {

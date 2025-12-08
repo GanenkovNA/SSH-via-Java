@@ -1,6 +1,7 @@
 package io.github.ganenkovna.ssh.commands.ip.a.dto.addr.v6;
 
 import static io.github.ganenkovna.util.StringUtils.normalizeForEnum;
+
 import io.github.ganenkovna.util.StringUtils;
 
 /**
@@ -46,7 +47,8 @@ public enum GenerationFlag {
   /**
    * Проверяет валидность строкового представления флага генерации IPv6.
    *
-   * <p>Перед проверкой выполняется нормализация в {@link StringUtils#normalizeForEnum(String, String)}.</p>
+   * <p>Перед проверкой выполняется нормализация в
+   * {@link StringUtils#normalizeForEnum(String, String)}.</p>
    *
    * <p>Возвращает {@code true}, если после нормализации значение найдено;
    * возвращает {@code false}, если {@code input == null}, строка пустая после trim()
@@ -78,7 +80,7 @@ public enum GenerationFlag {
    * @see StringUtils#normalizeForEnum(String, String)
    */
   public static GenerationFlag getIgnoreCase(String input) {
-    input = normalizeForEnum(input,"Флаг генерации IPv6");
+    input = normalizeForEnum(input, "Флаг генерации IPv6");
 
     try {
       return GenerationFlag.valueOf(input);

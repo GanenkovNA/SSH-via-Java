@@ -2,6 +2,7 @@ package io.github.ganenkovna.util.ip;
 
 import static io.github.ganenkovna.util.StringUtils.normalizeForDto;
 import static io.github.ganenkovna.util.StringUtils.requireNonBlank;
+
 import io.github.ganenkovna.util.StringUtils;
 import java.util.Objects;
 import java.util.regex.Pattern;
@@ -50,7 +51,8 @@ public final class IpUtils {
    *
    * <p>Выполняются следующие шаги:</p>
    * <ol>
-   *   <li>нормализация входной строки через {@link StringUtils#normalizeForDto(String, String)};</li>
+   *   <li>нормализация входной строки через
+   *       {@link StringUtils#normalizeForDto(String, String)};</li>
    *   <li>проверка структуры {@code ip/prefix};</li>
    *   <li>валидация IPv4-адреса через {@link #validateIpv4(String)};</li>
    *   <li>валидация длины префикса через {@link #validateIpv4Prefix(String)}.</li>
@@ -63,11 +65,11 @@ public final class IpUtils {
    * @see #validateIpv4(String)
    * @see #validateIpv4Prefix(String)
    */
-  public static boolean validateIpv4Cidr(String cidr){
+  public static boolean validateIpv4Cidr(String cidr) {
     cidr = normalizeForDto(cidr, "CIDR-строка");
 
     final int slash = cidr.indexOf('/');
-    if (slash <= 0 || slash == cidr.length()-1){
+    if (slash <= 0 || slash == cidr.length() - 1) {
       throw new IllegalArgumentException("Ожидается формат A.B.C.D/len: " + cidr);
     }
 
@@ -92,7 +94,7 @@ public final class IpUtils {
   public static boolean validateIpv4(String ip) {
     Objects.requireNonNull(ip, "IPv4-адрес не может быть null");
     if (IP4_PATTERN.matcher(ip).matches()) {
-        return true;
+      return true;
     }
     throw new IllegalArgumentException("Неверный формат IPv4-адреса: " + ip);
   }
@@ -107,7 +109,7 @@ public final class IpUtils {
    * @throws NullPointerException если {@code prefix == null}
    * @throws IllegalArgumentException если значение вне диапазона {@code 0..32}
    */
-  public static boolean validateIpv4Prefix(String prefix){
+  public static boolean validateIpv4Prefix(String prefix) {
     Objects.requireNonNull(prefix, "IPv4-префикс не может быть null");
     if (!IP4_PREFIX_LEN.matcher(prefix).matches()) {
       throw new IllegalArgumentException("Длина префикса вне диапазона 0..32: " + prefix);
@@ -137,10 +139,10 @@ public final class IpUtils {
     Objects.requireNonNull(ip, "IPv6-адрес не может быть null");
 
     int zoneIdx = ip.indexOf('%');
-    if (zoneIdx >= 0){
+    if (zoneIdx >= 0) {
       if (!IPV6_ZONE_SUFFIX.matcher(ip.substring(zoneIdx)).find()) {
-          throw new IllegalArgumentException("Неверный zone-suffix у IPv6-адреса: " + ip);
-        }
+        throw new IllegalArgumentException("Неверный zone-suffix у IPv6-адреса: " + ip);
+      }
       ip = ip.substring(0, zoneIdx);
     }
 
@@ -168,14 +170,15 @@ public final class IpUtils {
    *
    * @param ip проверяемый IP-адрес; не {@code null}
    * @param cidr подсеть в CIDR-нотации (например, {@code 192.168.10.0/24}); не {@code null}
-   * @return {@code true}, если {@code ip} входит в указанную подсеть (без учёта адреса сети и broadcast)
+   * @return {@code true}, если {@code ip} входит в указанную подсеть
+   *         (без учёта адреса сети и broadcast)
    * @throws NullPointerException если любой аргумент равен {@code null}
    * @throws IllegalArgumentException если {@code ip} или {@code cidr} не соответствуют IPv4-формату
    * @see SubnetUtils
    * @see #validateIpv4(String)
    * @see #validateIpv4Cidr(String)
    */
-  public static boolean isIpInSubnet(String ip, String cidr){
+  public static boolean isIpInSubnet(String ip, String cidr) {
     ip = requireNonBlank(ip, "IP-адрес");
     validateIpv4(ip);
     cidr = requireNonBlank(cidr, "Подсеть в CIDR-нотации");
@@ -193,7 +196,8 @@ public final class IpUtils {
    * интервалы проверяются на пересечение по правилу {@code aLow <= bHigh && bLow <= aHigh}.</p>
    *
    * <p><b>Важно:</b> для корректности сравнения адрес сети и broadcast-адрес
-   * считаются как обычные хост-адреса ({@link SubnetUtils#setInclusiveHostCount(boolean)} = {@code true}).</p>
+   * считаются как обычные хост-адреса
+   * ({@link SubnetUtils#setInclusiveHostCount(boolean)} = {@code true}).</p>
    *
    * <p>Пример:</p>
    * <pre>{@code
@@ -213,7 +217,7 @@ public final class IpUtils {
    * @see SubnetUtils#setInclusiveHostCount(boolean)
    * @see #validateIpv4Cidr(String)
    */
-  public static boolean cidrOverlap(String cidr1, String cidr2){
+  public static boolean cidrOverlap(String cidr1, String cidr2) {
     cidr1 = requireNonBlank(cidr1, "Подсеть 1 в CIDR-нотации");
     validateIpv4Cidr(cidr1);
     cidr2 = requireNonBlank(cidr2, "Подсеть 2 в CIDR-нотации");
@@ -222,7 +226,7 @@ public final class IpUtils {
     SubnetUtils s1 = new SubnetUtils(cidr1);
     SubnetUtils s2 = new SubnetUtils(cidr2);
 
-    //Считаем network address и broadcast address как обычные хосты
+    // Считаем network address и broadcast address как обычные хосты
     s1.setInclusiveHostCount(true);
     s2.setInclusiveHostCount(true);
 
@@ -250,11 +254,13 @@ public final class IpUtils {
    * ipToLong("192.168.1.1")     == 3232235777L
    * }</pre>
    *
-   * @param ip IPv4-адрес в виде {@code A.B.C.D}; не {@code null}, корректность формата ожидается «сверху»
+   * @param ip IPv4-адрес в виде {@code A.B.C.D}; не {@code null},
+   *           корректность формата ожидается «сверху»
    * @return числовое представление адреса как {@code long} в диапазоне {@code 0..4294967295}
    * @throws NumberFormatException если любой из октетов не является десятичным числом
-   * @implNote Метод предполагает, что валидность строки уже проверена (например, через {@link #validateIpv4(String)}),
-   * и используется внутренне для расчётов диапазонов.
+   * @implNote Метод предполагает, что валидность строки уже проверена
+   *           (например, через {@link #validateIpv4(String)}), и
+   *           используется внутренне для расчётов диапазонов.
    */
   private static long ipToLong(String ip) {
     long result = 0;

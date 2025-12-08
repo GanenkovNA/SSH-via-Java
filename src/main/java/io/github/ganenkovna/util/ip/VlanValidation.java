@@ -40,9 +40,10 @@ public final class VlanValidation {
    *                                  или больше {@code 4094};
    *                                  сообщение включает фактическое значение
    */
-  public static void validateVlanId(int vlanId){
-    if (!isVlanIdValid(vlanId)){
-      throw new IllegalArgumentException("VLAN Id должен быть в диапазоне 1-4094, текущее значение: " + vlanId);
+  public static void validateVlanId(int vlanId) {
+    if (!isVlanIdValid(vlanId)) {
+      throw new IllegalArgumentException(
+          "VLAN Id должен быть в диапазоне 1-4094, текущее значение: " + vlanId);
     }
   }
 
@@ -52,7 +53,7 @@ public final class VlanValidation {
    * @param vlanId проверяемое значение
    * @return {@code true}, если {@code 1 ≤ vlanId ≤ 4094}; иначе {@code false}
    */
-  public static boolean isVlanIdValid (int vlanId){
+  public static boolean isVlanIdValid(int vlanId) {
     return vlanId >= MIN_VLAN_ID && vlanId <= MAX_VLAN_ID;
   }
 }

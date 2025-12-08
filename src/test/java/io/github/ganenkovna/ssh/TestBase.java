@@ -80,7 +80,7 @@ public class TestBase {
    * @throws RuntimeException если не удалось установить соединение
    */
   @BeforeAll
-  public static void startUp(){
+  public static void startUp() {
     sessionManage = new SshSession(hostConfig);
     currentSession = sessionManage.createSession();
   }
@@ -91,7 +91,7 @@ public class TestBase {
    * <p>Корректно закрывает SSH-сессию и освобождает ресурсы.
    */
   @AfterAll
-  public static void tearDown(){
+  public static void tearDown() {
     sessionManage.closeSession();
   }
 }

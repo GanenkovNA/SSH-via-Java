@@ -1,7 +1,7 @@
 package io.github.ganenkovna.ssh.host.dto;
 
-import io.github.ganenkovna.util.StringUtils;
 import io.github.ganenkovna.ssh.host.HostConfigIO;
+import io.github.ganenkovna.util.StringUtils;
 import java.util.List;
 import java.util.Objects;
 import lombok.Getter;
@@ -60,7 +60,8 @@ public final class HostConfigDTO {
    * @see HostConfigIO
    */
   public void setInterfacesConfig(HostInterfacesConfigDTO interfacesConfig) {
-    this.interfacesConfig = Objects.requireNonNull(interfacesConfig, "interfacesConfig не может быть null");
+    this.interfacesConfig = Objects.requireNonNull(interfacesConfig,
+        "interfacesConfig не может быть null");
   }
 
   /**
@@ -101,13 +102,14 @@ public final class HostConfigDTO {
    * <p>Метод делегирует вызов в {@link HostInterfacesConfigDTO#getMgmtInterface()}.
    * Если конфигурация интерфейсов отсутствует, будет выброшено исключение.</p>
    *
-   * @return имя {@code management}-интерфейса; никогда не {@code null} и не пустое после {@code trim()}
+   * @return имя {@code management}-интерфейса;
+   *     никогда не {@code null} и не пустое после {@code trim()}
    * @throws IllegalStateException если конфигурация интерфейсов не инициализирована
    * @see HostInterfacesConfigDTO#getMgmtInterface()
    * @see #requireInterfacesConfig()
    */
   public String getMgmtInterface() {
-      return requireInterfacesConfig().getMgmtInterface();
+    return requireInterfacesConfig().getMgmtInterface();
   }
 
   /**

@@ -1,6 +1,7 @@
 package io.github.ganenkovna.ssh.commands.ip.a.dto.physical;
 
 import static io.github.ganenkovna.util.StringUtils.normalizeForDto;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 import io.github.ganenkovna.util.StringUtils;
 import io.github.ganenkovna.util.ip.MacValidation;
@@ -36,10 +37,11 @@ public final class InterfacePhysicalConfigDto {
    * @throws IllegalArgumentException если linkType пустая строка
    * @see StringUtils#normalizeForDto(String, String)
    * @see <a href="https://man7.org/linux/man-pages/man8/ip-link.8.html">ip-link(8)</a>
-   * @implNote Типы соответствуют семействам каналов ({@code link/*}) и значениям {@code ARPHRD_*} из {@code <linux/if_arp.h>}.
+   * @implNote Типы соответствуют семействам каналов ({@code link/*})
+   *           и значениям {@code ARPHRD_*} из {@code <linux/if_arp.h>}.
    */
   public void setLinkType(String linkType) {
-    this.linkType = normalizeForDto(linkType,"Тип канального уровня");
+    this.linkType = normalizeForDto(linkType, "Тип канального уровня");
   }
 
   /**
@@ -54,7 +56,7 @@ public final class InterfacePhysicalConfigDto {
    * @see StringUtils#normalizeForDto(String, String)
    */
   public void setMac(String mac) {
-    mac = normalizeForDto(mac,"MAC-адрес");
+    mac = normalizeForDto(mac, "MAC-адрес");
 
     MacValidation.validateMac(mac);
     this.mac = mac;
@@ -72,7 +74,7 @@ public final class InterfacePhysicalConfigDto {
    * @see StringUtils#normalizeForDto(String, String)
    */
   public void setBroadcastMac(String broadcastMac) {
-    broadcastMac = normalizeForDto(broadcastMac,"broadcast MAC-адреса");
+    broadcastMac = normalizeForDto(broadcastMac, "broadcast MAC-адреса");
 
     try {
       MacValidation.validateMac(broadcastMac);
@@ -97,7 +99,7 @@ public final class InterfacePhysicalConfigDto {
    */
   public void addUnknownParam(String unknownParam) {
     unknownParams.add(
-        normalizeForDto(unknownParam,"Физический параметр интерфейса"));
+        normalizeForDto(unknownParam, "Физический параметр интерфейса"));
   }
 
   /**

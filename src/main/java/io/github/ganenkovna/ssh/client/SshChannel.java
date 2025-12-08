@@ -143,16 +143,16 @@ public class SshChannel {
     } finally {
       try {
         // Завершаем все процессы
-        if (in != null){
+        if (in != null) {
           in.close();
         }
       } catch (IOException ignore) {}
       try {
-        if (err != null){
+        if (err != null) {
           err.close();
         }
       } catch (IOException ignore) {}
-      if (channel != null && channel.isConnected()){
+      if (channel != null && channel.isConnected()) {
         channel.disconnect();
       }
     }

@@ -38,7 +38,8 @@ public enum RouteFlag {
   /**
    * Проверяет существование флага маршрутизации.
    *
-   * <p>Перед проверкой выполняется нормализация в {@link StringUtils#normalizeForEnum(String, String)}.</p>
+   * <p>Перед проверкой выполняется нормализация
+   * в {@link StringUtils#normalizeForEnum(String, String)}.</p>
    *
    * <p>Возвращает {@code true}, если после нормализации значение найдено;
    * возвращает {@code false}, если {@code input == null}, строка пустая после trim()
@@ -70,9 +71,9 @@ public enum RouteFlag {
    * @see StringUtils#normalizeForEnum(String, String)
    */
   public static RouteFlag getIgnoreCase(String input) {
-    input = StringUtils.normalizeForEnum(input,"Флаг маршрутизации IPv6");
+    input = StringUtils.normalizeForEnum(input, "Флаг маршрутизации IPv6");
 
-    try{
+    try {
       return RouteFlag.valueOf(input);
     } catch (IllegalArgumentException e) {
       throw new IllegalArgumentException("Значение флага маршрутизации IPv6 не найдено: " + input);

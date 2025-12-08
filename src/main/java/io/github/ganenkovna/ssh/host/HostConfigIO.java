@@ -24,7 +24,8 @@ import java.util.Objects;
  *   <li>Чтение {@link HostConnectionConfigDTO} (параметры SSH-подключения);</li>
  *   <li>Чтение и запись {@link HostInterfacesConfigDTO} (конфигурация интерфейсов);</li>
  *   <li>Строгая сериализация/десериализация JSON (Jackson с жёсткими флагами);</li>
- *   <li>Атомарная запись через временный файл с фолбэком для FS без {@link StandardCopyOption#ATOMIC_MOVE}.</li>
+ *   <li>Атомарная запись через временный файл с фолбэком
+ *       для FS без {@link StandardCopyOption#ATOMIC_MOVE}.</li>
  * </ul>
  *
  * <p><b>Потокобезопасность:</b> класс не потокобезопасен.</p>
@@ -39,7 +40,8 @@ import java.util.Objects;
  *     baseDir.toString(), "host_interfaces_config.json");
  *
  * // правим interfaces и сохраняем
- * HostConfigIO.writeInterfacesConfig(baseDir.toString(), "host_interfaces_config.json", interfaces);
+ * HostConfigIO.writeInterfacesConfig(baseDir.toString(),
+ *     "host_interfaces_config.json", interfaces);
  * }</pre>
  *
  * @see HostConnectionConfigDTO
@@ -58,7 +60,8 @@ public final class HostConfigIO {
    * <ul>
    *   <li>{@link DeserializationFeature#FAIL_ON_UNKNOWN_PROPERTIES} = {@code true};</li>
    *   <li>{@link DeserializationFeature#FAIL_ON_MISSING_CREATOR_PROPERTIES} = {@code true};</li>
-   *   <li>{@link SerializationFeature#INDENT_OUTPUT} = {@code true} (красивый вывод при записи).</li>
+   *   <li>{@link SerializationFeature#INDENT_OUTPUT} = {@code true}
+   *       (красивый вывод при записи).</li>
    * </ul>
    *
    * <p>Экземпляр настраивается один раз и переиспользуется методами класса.</p>
@@ -84,7 +87,8 @@ public final class HostConfigIO {
    * <p>Ожидается наличие указанной директории и файла внутри неё. Десериализация строгая:
    * неизвестные поля или отсутствие обязательных свойств приводят к ошибке.</p>
    *
-   * @param hostConfigsDir путь к директории с конфигурациями; строго не {@code null}, должна существовать
+   * @param hostConfigsDir путь к директории с конфигурациями;
+   *                       строго не {@code null}, должна существовать
    * @param hostConnectionConfigName имя файла конфигурации подключения; строго не {@code null}
    * @return десериализованный {@link HostConnectionConfigDTO}; никогда не {@code null}
    * @throws IOException если директория не найдена, файл отсутствует либо JSON некорректен
@@ -94,12 +98,14 @@ public final class HostConfigIO {
                                                              String hostConnectionConfigName)
       throws IOException {
     Path hostConfigsDirPath = toExistingDirectory(hostConfigsDir);
-    Path hostConnectionConfigPath = requireFileInDirectory(hostConfigsDirPath, hostConnectionConfigName);
+    Path hostConnectionConfigPath = requireFileInDirectory(
+        hostConfigsDirPath, hostConnectionConfigName);
 
     try (Reader r = Files.newBufferedReader(hostConnectionConfigPath, UTF8)) {
       return MAPPER.readValue(r, HostConnectionConfigDTO.class);
     } catch (IOException e) {
-      throw new IOException("Ошибка при чтении HostConnectionConfig: " + hostConnectionConfigPath, e);
+      throw new IOException("Ошибка при чтении HostConnectionConfig: "
+          + hostConnectionConfigPath, e);
     }
   }
 
@@ -115,7 +121,8 @@ public final class HostConfigIO {
    * @param hostConfigsDir путь к директории для записи; строго не {@code null}, должна существовать
    * @param hostInterfacesConfigName имя файла конфигурации интерфейсов; строго не {@code null}
    * @param dto объект конфигурации интерфейсов; строго не {@code null}
-   * @throws IOException если директория не найдена, файл невозможно создать или произошла ошибка записи
+   * @throws IOException если директория не найдена,
+   *     файл невозможно создать или произошла ошибка записи
    * @see HostInterfacesConfigDTO
    * @see Files#move(Path, Path, java.nio.file.CopyOption...)
    */
@@ -130,7 +137,8 @@ public final class HostConfigIO {
         .normalize();
 
     // tmp рядом с целевым файлом
-    Path tmp = hostConfigsDirPath.resolve(hostInterfacesConfigPath.getFileName().toString() + ".tmp");
+    Path tmp = hostConfigsDirPath.resolve(
+        hostInterfacesConfigPath.getFileName().toString() + ".tmp");
     try (Writer w = Files.newBufferedWriter(tmp, UTF8)) {   // 3. пишем в tmp (UTF-8)
       MAPPER.writeValue(w, dto);
     }
@@ -152,7 +160,8 @@ public final class HostConfigIO {
    * <p>Ожидается наличие указанной директории и файла внутри неё. Десериализация строгая:
    * неизвестные поля или отсутствие обязательных свойств приводят к ошибке.</p>
    *
-   * @param hostConfigsDir путь к директории с конфигурациями; строго не {@code null}, должна существовать
+   * @param hostConfigsDir путь к директории с конфигурациями;
+   *                       строго не {@code null}, должна существовать
    * @param hostInterfacesConfigName имя файла конфигурации интерфейсов; строго не {@code null}
    * @return десериализованный {@link HostInterfacesConfigDTO}; никогда не {@code null}
    * @throws IOException если директория не найдена, файл отсутствует либо JSON некорректен
@@ -162,12 +171,14 @@ public final class HostConfigIO {
                                                              String hostInterfacesConfigName)
       throws IOException {
     Path hostConfigsDirPath = toExistingDirectory(hostConfigsDir);
-    Path hostInterfacesConfigPath = requireFileInDirectory(hostConfigsDirPath, hostInterfacesConfigName);
+    Path hostInterfacesConfigPath = requireFileInDirectory(
+        hostConfigsDirPath, hostInterfacesConfigName);
 
     try (Reader r = Files.newBufferedReader(hostInterfacesConfigPath, UTF8)) {
       return MAPPER.readValue(r, HostInterfacesConfigDTO.class);
     } catch (IOException e) {
-      throw new IOException("Ошибка при чтении HostInterfacesConfig: " + hostInterfacesConfigPath, e);
+      throw new IOException("Ошибка при чтении HostInterfacesConfig: "
+          + hostInterfacesConfigPath, e);
     }
   }
 
@@ -178,7 +189,8 @@ public final class HostConfigIO {
    * будет выброшено исключение.</p>
    *
    * @param hostConfigsDir путь к директории; строго не {@code null}
-   * @return нормализованный абсолютный {@link Path} к существующей директории; никогда не {@code null}
+   * @return нормализованный абсолютный {@link Path} к существующей директории;
+   *     никогда не {@code null}
    * @throws IOException если директория отсутствует либо по пути обнаружен файл
    */
   private static Path toExistingDirectory(String hostConfigsDir)

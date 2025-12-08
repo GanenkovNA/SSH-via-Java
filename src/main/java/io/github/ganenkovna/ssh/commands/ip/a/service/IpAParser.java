@@ -73,8 +73,8 @@ public final class IpAParser {
         currentInterface = new InterfaceDto();
 
         // Внесение нераспознанных строк в первый интерфейс для дебага
-        if (!preamble.isEmpty()){
-          for (String u : preamble){
+        if (!preamble.isEmpty()) {
+          for (String u : preamble) {
             currentInterface.addUnknownLine(u);
           }
           preamble.clear();
@@ -82,7 +82,7 @@ public final class IpAParser {
 
         i = parseInterface(i, lines, currentInterface);
         interfaces.add(currentInterface);
-      } else{
+      } else {
         if (currentInterface == null) {
           preamble.add("Преамбула/неизвестная строка " + i + ": " + lines[i] + "\n");
         } else {
@@ -95,11 +95,13 @@ public final class IpAParser {
 
   /**
    * Обрабатывает блок одного интерфейса, начиная с строки-заголовка.
+   *
    * <p>Вызывается только из {@link #parseOutput(String)}. Гарантии со стороны вызывающего:</p>
    * <ul>
    *   <li>{@code lines} — строго не {@code null}, строки уже нормализованы</li>
    *   <li>{@code currentInterface} — строго не {@code null}</li>
-   *   <li>{@code i} указывает на строку, удовлетворяющую {@code ^\d+:} (см. {@code INDEX_PATTERN})</li>
+   *   <li>{@code i} указывает на строку, удовлетворяющую {@code ^\d+:}
+   *       (см. {@code INDEX_PATTERN})</li>
    * </ul>
    *
    * @param i     индекс строки-заголовка интерфейса
@@ -119,16 +121,14 @@ public final class IpAParser {
     }
 
     while (i + 1 < lines.length && !isInterfaceStart(lines[i + 1])) {
-      // IPv-4
       if (isLineStart(lines[i + 1], INET_LINE)) {
+        // IPv-4
         i = parseInetBlock(++i, lines, currentInterface);
-      }
-      // IPv-6
-      else if (isLineStart(lines[i + 1], INET6_LINE)) {
+      } else if (isLineStart(lines[i + 1], INET6_LINE)) {
+        // IPv-6
         i = parseInet6Block(++i, lines, currentInterface);
-      }
-      // Нераспознанные строки
-      else {
+      } else {
+        // Нераспознанные строки
         currentInterface.addUnknownLine("Неизвестная строка: " + lines[++i]);
       }
     }
@@ -162,30 +162,26 @@ public final class IpAParser {
           || tryParseInterfaceName(parts[i], interfaceDetails)
           || tryParseFlags(parts[i], interfaceDetails)) {
         continue;
-      }
-      // Парсинг MTU
-      else if (isEqualIgnoreCase(parts[i], MTU)) {
+      } else if (isEqualIgnoreCase(parts[i], MTU)) {
+        // Парсинг MTU
         try {
           interfaceDetails.setMtu(Integer.parseInt(parts[++i]));
         } catch (IllegalArgumentException e) {
           interfaceDetails.addUnknownParam(e.getMessage());
         }
-      }
-      // Парсинг дисциплины очереди
-      else if (isEqualIgnoreCase(parts[i], QDISC)) {
+      } else if (isEqualIgnoreCase(parts[i], QDISC)) {
+        // Парсинг дисциплины очереди
         if (QdiscType.isValid(parts[i + 1])) {
           interfaceDetails.setQdiscType(
               QdiscType.getIgnoreCase(parts[++i]));
         } else {
           interfaceDetails.addUnknownParam("Значение qdisc не найдено: " + parts[i + 1]);
         }
-      }
-      // Парсинг родительского интерфейса
-      else if (isEqualIgnoreCase(parts[i], MASTER)) {
+      } else if (isEqualIgnoreCase(parts[i], MASTER)) {
+        // Парсинг родительского интерфейса
         interfaceDetails.setMaster(parts[++i]);
-      }
-      // Парсинг состояния интерфейса
-      else if (isEqualIgnoreCase(parts[i], STATE)) {
+      } else if (isEqualIgnoreCase(parts[i], STATE)) {
+        // Парсинг состояния интерфейса
         if (InterfaceState.isValid(parts[i + 1])) {
           interfaceDetails.setState(
               InterfaceState.getIgnoreCase(parts[++i]));
@@ -193,21 +189,18 @@ public final class IpAParser {
           interfaceDetails.addUnknownParam(
               "Значение состояния интерфейса не найдено: " + parts[i + 1]);
         }
-      }
-      // Парсинг группы интерфейса
-      else if (isEqualIgnoreCase(parts[i], GROUP)) {
+      } else if (isEqualIgnoreCase(parts[i], GROUP)) {
+        // Парсинг группы интерфейса
         interfaceDetails.setGroup(parts[++i]);
-      }
-      // Парсинг длины очереди передачи
-      else if (isEqualIgnoreCase(parts[i], QLEN)) {
+      } else if (isEqualIgnoreCase(parts[i], QLEN)) {
+        // Парсинг длины очереди передачи
         try {
           interfaceDetails.setQlen(Integer.parseInt(parts[++i]));
         } catch (IllegalArgumentException e) {
           interfaceDetails.addUnknownParam(e.getMessage());
         }
-      }
-      // Внесение нераспознанных параметров
-      else {
+      } else {
+        // Внесение нераспознанных параметров
         interfaceDetails.addUnknownParam("Неизвестный параметр: " + parts[i]);
       }
     }
@@ -289,7 +282,8 @@ public final class IpAParser {
    *
    * @param line токен вида {@code <...>} (строго не {@code null})
    * @param dto  DTO для сохранения результата (строго не {@code null})
-   * @return {@code true}, если токен флагов распознан; {@code false} — если токен не соответствует формату
+   * @return {@code true}, если токен флагов распознан;
+   *         {@code false} — если токен не соответствует формату
    */
   private static boolean tryParseFlags(String line, InterfaceBaseConfigDto dto) {
     final Matcher matcher = FLAGS_PATTERN.matcher(line);
@@ -310,7 +304,7 @@ public final class IpAParser {
         }
       }
 
-      if (!unknownFlags.isEmpty()){
+      if (!unknownFlags.isEmpty()) {
         dto.addUnknownParam("Неизвестные флаги интерфейса: "
             + String.join(", ", unknownFlags));
       }
@@ -341,24 +335,23 @@ public final class IpAParser {
           // MAC-адрес
           if (i + 1 < parts.length) {
             i++;
-            if (validateMac(parts[i])){
+            if (validateMac(parts[i])) {
               interfacePhysicalParams.setMac(parts[i]);
             } else if (!isBroadcastKey(parts[i])) {
-              interfacePhysicalParams.addUnknownParam("Ожидался MAC сразу после " + parts[i-1] + ", получено: " + parts[i]);
+              interfacePhysicalParams.addUnknownParam("Ожидался MAC сразу после "
+                  + parts[i - 1] + ", получено: " + parts[i]);
             }
           }
         }
-      }
-      // Парсинг MAC-broadcast
-      else if (isBroadcastKey(parts[i])) {
+      } else if (isBroadcastKey(parts[i])) {
+        // Парсинг MAC-broadcast
         try {
           interfacePhysicalParams.setBroadcastMac(parts[++i]);
         } catch (IllegalArgumentException e) {
           interfacePhysicalParams.addUnknownParam(e.getMessage());
         }
-      }
-      // Внесение нераспознанных параметров
-      else if (!parts[i].isBlank()) {
+      } else if (!parts[i].isBlank()) {
+        // Внесение нераспознанных параметров
         interfacePhysicalParams.addUnknownParam("Неизвестный параметр: " + parts[i]);
       }
     }
@@ -401,7 +394,8 @@ public final class IpAParser {
    *
    * <p>Метод извлекает и заполняет параметры:
    * <ul>
-   *   <li>основной IPv4-адрес и префикс (через {@link ParserTokens#IP_ADDR_AND_PREFIX_PATTERN});</li>
+   *   <li>основной IPv4-адрес и префикс
+   *       (через {@link ParserTokens#IP_ADDR_AND_PREFIX_PATTERN});</li>
    *   <li>широковещательный адрес (broadcast);</li>
    *   <li>область видимости (scope) и связанный {@code netDevice};</li>
    *   <li>флаги состояния IPv4-адреса ({@link IpV4AddressFlag});</li>
@@ -412,7 +406,8 @@ public final class IpAParser {
    * к выбросу исключения — они сохраняются в {@code unknownParams} результирующего DTO.</p>
    *
    * @param line строка с IPv4-конфигурацией (не {@code null}, предварительно нормализована)
-   * @return DTO с параметрами IPv4; никогда не {@code null}, может содержать только частичные данные
+   * @return DTO с параметрами IPv4; никогда не {@code null},
+   *     может содержать только частичные данные
    * @see InterfaceIpv4ConfigDto
    * @see IpV4Scope
    * @see IpV4AddressFlag
@@ -441,9 +436,8 @@ public final class IpAParser {
             interfaceIpv4Config.addUnknownParam(e.getMessage());
           }
         }
-      }
-      // Парсинг IPv4-broadcast
-      else if (isBroadcastKey(parts[i])) {
+      } else if (isBroadcastKey(parts[i])) {
+        // Парсинг IPv4-broadcast
         matcher = IP_BROADCAST_ADDR_PATTERN.matcher(parts[++i]);
         if (matcher.matches()) {
           try {
@@ -452,28 +446,27 @@ public final class IpAParser {
             interfaceIpv4Config.addUnknownParam(e.getMessage());
           }
         }
-      }
-      // Парсинг области видимости и NET_DEVICE
-      else if (isEqualIgnoreCase(parts[i], SCOPE)) {
+      } else if (isEqualIgnoreCase(parts[i], SCOPE)) {
+        // Парсинг области видимости и NET_DEVICE
+
         // Область видимости
         if (IpV4Scope.isValid(parts[i + 1])) {
           interfaceIpv4Config.setScope(
-            IpV4Scope.getIgnoreCase(parts[++i]));
+              IpV4Scope.getIgnoreCase(parts[++i]));
         } else {
-          interfaceIpv4Config.addUnknownParam("Неизвестная область видимости (scope): " + parts[++i]);
+          interfaceIpv4Config.addUnknownParam("Неизвестная область видимости (scope): "
+              + parts[++i]);
         }
         // NET_DEVICE
         if (i + 1 < parts.length) {
           interfaceIpv4Config.setNetDevice(parts[++i]);
         }
-      }
-
-      else if (IpV4AddressFlag.isValid(parts[i])) {
+      } else if (IpV4AddressFlag.isValid(parts[i])) {
+        // Парсинг состояния IPv4-адреса
         interfaceIpv4Config.addIpV4AddressFlag(
             IpV4AddressFlag.getIgnoreCase(parts[i]));
-      }
-      // Внесение нераспознанных параметров
-      else if (!parts[i].isBlank()) {
+      } else if (!parts[i].isBlank()) {
+        // Внесение нераспознанных параметров
         interfaceIpv4Config.addUnknownParam("Неизвестный параметр: " + parts[i]);
       }
     }
@@ -557,26 +550,22 @@ public final class IpAParser {
             interfaceIpv6Config.addUnknownParam(e.getMessage());
           }
         }
-      }
-      // Парсинг области видимости
-      else if (isEqualIgnoreCase(parts[i], SCOPE)) {
+      } else if (isEqualIgnoreCase(parts[i], SCOPE)) {
+        // Парсинг области видимости
         while (i + 1 < parts.length && IpV6Scope.isValid(parts[i + 1])) {
           interfaceIpv6Config.addScope(
               IpV6Scope.getIgnoreCase(parts[++i]));
         }
-      }
-      // Парсинг флага генерации
-      else if (GenerationFlag.isValid(parts[i])) {
+      } else if (GenerationFlag.isValid(parts[i])) {
+        // Парсинг флага генерации
         interfaceIpv6Config.addGenerationFlag(
             GenerationFlag.getIgnoreCase(parts[i]));
-      }
-      // Парсинг флага маршрутизации
-      else if (RouteFlag.isValid(parts[i])) {
+      } else if (RouteFlag.isValid(parts[i])) {
+        // Парсинг флага маршрутизации
         interfaceIpv6Config.addRouteFlag(
             RouteFlag.getIgnoreCase(parts[i]));
-      }
-      // Внесение нераспознанных параметров
-      else {
+      } else {
+        // Внесение нераспознанных параметров
         interfaceIpv6Config.addUnknownParam("Неизвестный параметр: " + parts[i]);
       }
     }
@@ -619,16 +608,14 @@ public final class IpAParser {
     String[] parts = trimOutputLine(line);
 
     for (int i = 0; i < parts.length; i++) {
-      // Парсинг времени жизни адреса до недействительности
       if (parts[i].equalsIgnoreCase(VALID_LFT)) {
+        // Парсинг времени жизни адреса до недействительности
         lifeTimeParams.setValidLft(parts[++i]);
-      }
-      // Парсинг времени жизни адреса до устаревания
-      else if (parts[i].equalsIgnoreCase(PREFERRED_LFT)) {
+      } else if (parts[i].equalsIgnoreCase(PREFERRED_LFT)) {
+        // Парсинг времени жизни адреса до устаревания
         lifeTimeParams.setPreferredLft(parts[++i]);
-      }
-      // Внесение нераспознанных параметров
-      else if (!parts[i].isBlank()) {
+      } else if (!parts[i].isBlank()) {
+        // Внесение нераспознанных параметров
         lifeTimeParams.addUnknownParam("Неизвестный параметр: " + parts[i]);
       }
     }

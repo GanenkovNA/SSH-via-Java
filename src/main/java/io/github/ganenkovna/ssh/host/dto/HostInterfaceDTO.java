@@ -1,6 +1,10 @@
 package io.github.ganenkovna.ssh.host.dto;
 
 import static io.github.ganenkovna.util.StringUtils.normalizeForDto;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import io.github.ganenkovna.util.StringUtils;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -13,8 +17,8 @@ import lombok.ToString;
  * DTO сетевого интерфейса хоста.
  *
  * <p>Хранит имя интерфейса и набор тестов, изменения от которых не удалось откатить.
- * {@code interfaceName} — строго не {@code null} и не пустая/пробельная строка (нормализация выполняется
- * в {@link StringUtils#normalizeForDto(String, String)}).
+ * {@code interfaceName} — строго не {@code null} и не пустая/пробельная строка
+ * (нормализация выполняется в {@link StringUtils#normalizeForDto(String, String)}).
  * Коллекция {@code failedTests} — никогда не {@code null}, может быть пустой; снаружи возвращается
  * неизменяемая копия, порядок элементов соответствует порядку добавления.</p>
  *
@@ -25,8 +29,7 @@ import lombok.ToString;
  * @see HostInterfacesConfigDTO
  * @see StringUtils#normalizeForDto(String, String)
  */
-//@com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_EMPTY)
-@com.fasterxml.jackson.annotation.JsonPropertyOrder({"interfaceName", "failedTests"})
+@JsonPropertyOrder({"interfaceName", "failedTests"})
 @ToString
 @EqualsAndHashCode(of = "interfaceName")
 public final class HostInterfaceDTO {
@@ -41,34 +44,39 @@ public final class HostInterfaceDTO {
   /**
    * Создаёт DTO интерфейса с пустым набором «проваленных» тестов.
    *
-   * <p>Имя нормализуется (обрезка пробелов, проверка на пустоту) и сохраняется в каноническом виде.</p>
+   * <p>Имя нормализуется (обрезка пробелов, проверка на пустоту)
+   * и сохраняется в каноническом виде.</p>
    *
    * @param interfaceName имя интерфейса; строго не {@code null} и не пустое после {@code trim()}
    * @throws NullPointerException если {@code interfaceName == null}
-   * @throws IllegalArgumentException если {@code interfaceName} пустая/пробельная после {@code trim()}
+   * @throws IllegalArgumentException если {@code interfaceName}
+   *                                  пустая/пробельная после {@code trim()}
    * @see StringUtils#normalizeForDto(String, String)
    */
-  public HostInterfaceDTO(String interfaceName){
+  public HostInterfaceDTO(String interfaceName) {
     this.interfaceName = normalizeForDto(interfaceName, "Имя интерфейса");
   }
 
   /**
    * JSON-конструктор для десериализации.
    *
-   * <p>{@code interfaceName} обязателен и нормализуется; {@code failedTests} может быть {@code null}.
+   * <p>{@code interfaceName} обязателен и нормализуется;
+   * {@code failedTests} может быть {@code null}.
    * Каждый тест из {@code failedTests} нормализуется; дубликаты удаляются, порядок сохраняется.</p>
    *
    * @param interfaceName имя интерфейса; строго не {@code null} и не пустое после {@code trim()}
    * @param failedTests список названий тестов; может быть {@code null} или пустым
-   * @throws NullPointerException если {@code interfaceName == null} или встречен {@code null} в {@code failedTests}
-   * @throws IllegalArgumentException если {@code interfaceName} пустая/пробельная либо элемент {@code failedTests} пустой/пробельный
-   * @see com.fasterxml.jackson.annotation.JsonCreator
+   * @throws NullPointerException если {@code interfaceName == null}
+   *                              или встречен {@code null} в {@code failedTests}
+   * @throws IllegalArgumentException если {@code interfaceName} пустая/пробельная
+   *                                  либо элемент {@code failedTests} пустой/пробельный
+   * @see JsonCreator
    * @see StringUtils#normalizeForDto(String, String)
    */
-  @com.fasterxml.jackson.annotation.JsonCreator
+  @JsonCreator
   public HostInterfaceDTO(
-      @com.fasterxml.jackson.annotation.JsonProperty(value = "interfaceName", required = true) String interfaceName,
-      @com.fasterxml.jackson.annotation.JsonProperty("failedTests") List<String> failedTests
+      @JsonProperty(value = "interfaceName", required = true) String interfaceName,
+      @JsonProperty("failedTests") List<String> failedTests
   ) {
     this.interfaceName = normalizeForDto(interfaceName, "Имя интерфейса");
     if (failedTests != null) {
@@ -81,7 +89,8 @@ public final class HostInterfaceDTO {
   /**
    * Возвращает неизменяемую копию множества «проваленных» тестов.
    *
-   * <p>Коллекция — никогда не {@code null}, может быть пустой. Порядок соответствует порядку добавления.</p>
+   * <p>Коллекция — никогда не {@code null}, может быть пустой.
+   * Порядок соответствует порядку добавления.</p>
    *
    * @return копия множества тестов; никогда не {@code null}, может быть пустой
    */
@@ -108,7 +117,8 @@ public final class HostInterfaceDTO {
   /**
    * Проверяет, присутствует ли указанный тест в списке «проваленных».
    *
-   * <p>Выполняется та же нормализация, что и при добавлении через {@link #addFailedTest(String)}.</p>
+   * <p>Выполняется та же нормализация,
+   * что и при добавлении через {@link #addFailedTest(String)}.</p>
    *
    * @param test название теста; строго не {@code null} и не пустое после {@code trim()}
    * @return {@code true}, если тест уже присутствует; иначе {@code false}
