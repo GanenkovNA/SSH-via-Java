@@ -1,4 +1,4 @@
-package io.github.ganenkovna.ssh.commands.ip.a.dto.addr.v6;
+package io.github.ganenkovna.util.ip.dto;
 
 import static io.github.ganenkovna.util.StringUtils.normalizeForEnum;
 
