@@ -6,6 +6,8 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import io.github.ganenkovna.ssh.commands.ip.a.dto.addr.LifeTimeParamsDto;
 import io.github.ganenkovna.util.StringUtils;
 import io.github.ganenkovna.util.ip.IpUtils;
+import io.github.ganenkovna.util.ip.dto.IpV4AddressFlag;
+import io.github.ganenkovna.util.ip.dto.IpV4Scope;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumSet;
