@@ -8,7 +8,7 @@ import io.github.ganenkovna.util.StringUtils;
 import io.github.ganenkovna.util.ip.IpUtils;
 import io.github.ganenkovna.util.ip.dto.GenerationFlag;
 import io.github.ganenkovna.util.ip.dto.IpV6Scope;
-import io.github.ganenkovna.util.ip.dto.RouteFlag;
+import io.github.ganenkovna.util.ip.dto.RouteFlagIpv6;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumSet;
@@ -28,7 +28,7 @@ import lombok.Setter;
  *
  * @see IpV6Scope Область видимости IPv6-адреса
  * @see GenerationFlag Флаги генерации IPv6-адресов
- * @see RouteFlag Флаги маршрутизации IPv6
+ * @see RouteFlagIpv6 Флаги маршрутизации IPv6
  * @see LifeTimeParamsDto Параметры времени жизни адреса
  */
 @Data
@@ -70,11 +70,11 @@ public final class InterfaceIpv6ConfigDto {
    * <p>Внутренне хранится как {@code EnumSet}; наружу возвращается
    * неизменяемое представление.</p>
    *
-   * @see RouteFlag
+   * @see RouteFlagIpv6
    */
 
   @Setter(AccessLevel.NONE)
-  private EnumSet<RouteFlag> routeFlags = EnumSet.noneOf(RouteFlag.class);
+  private EnumSet<RouteFlagIpv6> routeFlags = EnumSet.noneOf(RouteFlagIpv6.class);
 
   /** Параметры времени жизни адреса.
    *
@@ -180,9 +180,9 @@ public final class InterfaceIpv6ConfigDto {
    *
    * @param routeFlag флаг маршрутизации; не {@code null}
    * @throws NullPointerException если {@code routeFlag == null}
-   * @see RouteFlag
+   * @see RouteFlagIpv6
    */
-  public void addRouteFlag(RouteFlag routeFlag)
+  public void addRouteFlag(RouteFlagIpv6 routeFlag)
       throws NullPointerException {
     Objects.requireNonNull(routeFlag,
         "Значение флага маршрутизации IPv6-адреса не может быть null");
@@ -194,7 +194,7 @@ public final class InterfaceIpv6ConfigDto {
    *
    * @return неизменяемое множество флагов; никогда не {@code null}, может быть пустым
    */
-  public Set<RouteFlag> getRouteFlags() {
+  public Set<RouteFlagIpv6> getRouteFlags() {
     return Collections.unmodifiableSet(routeFlags);
   }
 

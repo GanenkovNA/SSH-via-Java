@@ -102,7 +102,7 @@ public final class BridgeLinkPortPOJO implements CaptureUnknown {
    * <p>Метод вызывается Jackson:
    * <ul>
    *   <li>для JSON-полей, отсутствующих в модели класса
-   *       (через {@link com.fasterxml.jackson.annotation.JsonAnySetter});</li>
+   *       (через {@link JsonAnySetter});</li>
    *   <li>из кастомных десериализаторов при обнаружении
    *       неизвестных значений enum-полей.</li>
    * </ul>

@@ -66,8 +66,8 @@ import java.util.Set;
  *
  * @see <a href="https://man7.org/linux/man-pages/man8/bridge.8.html">
  *     bridge(8) — Linux manual page</a>
- * @see io.github.ganenkovna.util.ip.dto.StpPortState
- * @see io.github.ganenkovna.util.ip.dto.InterfaceFlag
+ * @see StpPortState
+ * @see InterfaceFlag
  */
 public record BridgeLinkPortDTO(
     Integer ifindex,

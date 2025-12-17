@@ -144,14 +144,15 @@ public class BridgeLinkSmokeTests extends TestBase {
    */
   private static String identifyPort(BridgeLinkPortDTO port) {
     String name = port.ifname();
-    Integer idx = port.ifindex();
-
     if (name != null && !name.isBlank()) {
       return name;
     }
+
+    Integer idx = port.ifindex();
     if (idx != null) {
       return "ifindex=" + idx;
     }
+
     return null;
   }
 }

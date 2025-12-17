@@ -12,7 +12,7 @@ import io.github.ganenkovna.util.ip.dto.IpV4Scope;
 import io.github.ganenkovna.util.ip.dto.GenerationFlag;
 import io.github.ganenkovna.ssh.commands.ip.a.dto.addr.v6.InterfaceIpv6ConfigDto;
 import io.github.ganenkovna.util.ip.dto.IpV6Scope;
-import io.github.ganenkovna.util.ip.dto.RouteFlag;
+import io.github.ganenkovna.util.ip.dto.RouteFlagIpv6;
 import io.github.ganenkovna.ssh.commands.ip.a.dto.base.InterfaceBaseConfigDto;
 import io.github.ganenkovna.util.ip.dto.InterfaceFlag;
 import io.github.ganenkovna.util.ip.dto.InterfaceState;
@@ -524,7 +524,7 @@ public final class IpAParser {
    * @see InterfaceIpv6ConfigDto
    * @see IpV6Scope
    * @see GenerationFlag
-   * @see RouteFlag
+   * @see RouteFlagIpv6
    * @see <a href="https://man7.org/linux/man-pages/man8/ip-address.8.html">man ip-address(8)</a>
    */
   private static InterfaceIpv6ConfigDto parseIpV6Config(String line) {
@@ -560,10 +560,10 @@ public final class IpAParser {
         // Парсинг флага генерации
         interfaceIpv6Config.addGenerationFlag(
             GenerationFlag.getIgnoreCase(parts[i]));
-      } else if (RouteFlag.isValid(parts[i])) {
+      } else if (RouteFlagIpv6.isValid(parts[i])) {
         // Парсинг флага маршрутизации
         interfaceIpv6Config.addRouteFlag(
-            RouteFlag.getIgnoreCase(parts[i]));
+            RouteFlagIpv6.getIgnoreCase(parts[i]));
       } else {
         // Внесение нераспознанных параметров
         interfaceIpv6Config.addUnknownParam("Неизвестный параметр: " + parts[i]);
