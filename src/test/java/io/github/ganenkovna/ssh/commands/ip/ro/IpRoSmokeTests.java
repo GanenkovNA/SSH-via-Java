@@ -8,29 +8,29 @@ import io.github.ganenkovna.ssh.commands.ip.ro.dto.IpRoDTO;
 import java.util.List;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class IpRoSmokeTests extends TestBase {
+  private final List<IpRoDTO> result = IpRo.showRoutes(currentSession);
 
-  @Test
-  public void shouldExecIpRoAndOutput() throws JsonProcessingException {
-    final List<IpRoDTO> result = IpRo.showRoutes(currentSession);
+  private static final ObjectMapper mapper = new ObjectMapper()
+      .enable(SerializationFeature.INDENT_OUTPUT);
+
+  @BeforeEach
+  public void checkListOfRoutes() {
     Assertions.assertNotNull(result, "Список маршрутов - null!");
     Assertions.assertFalse(result.isEmpty(),
         "Получен пустой список маршрутов!");
+  }
 
-    ObjectMapper mapper = new ObjectMapper()
-        .enable(SerializationFeature.INDENT_OUTPUT);
+  @Test
+  public void shouldExecIpRoAndOutput() throws JsonProcessingException {
     System.out.println(mapper.writeValueAsString(result));
   }
 
   @Test
   public void shouldNotContainNullValues() {
-    final List<IpRoDTO> result = IpRo.showRoutes(currentSession);
-    Assertions.assertNotNull(result, "Список маршрутов - null!");
-    Assertions.assertFalse(result.isEmpty(),
-        "Получен пустой список маршрутов!");
-
     SoftAssertions softly = new SoftAssertions();
 
     for(IpRoDTO route : result) {
@@ -56,7 +56,6 @@ public class IpRoSmokeTests extends TestBase {
     if (dst != null && !dst.isBlank()) {
       return dst;
     }
-
     return null;
   }
 }

@@ -8,9 +8,10 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import io.github.ganenkovna.ssh.commands.ip.a.dto.InterfaceDto;
-import io.github.ganenkovna.ssh.commands.ip.a.dto.addr.v4.InterfaceIpv4ConfigDto;
-import io.github.ganenkovna.ssh.commands.ip.a.dto.addr.v6.InterfaceIpv6ConfigDto;
+import io.github.ganenkovna.ssh.commands.ip.a.dto.AddrInfoDto;
+import io.github.ganenkovna.ssh.commands.ip.a.dto.Inet6AddrInfoDto;
+import io.github.ganenkovna.ssh.commands.ip.a.dto.InetAddrInfoDto;
+import io.github.ganenkovna.ssh.commands.ip.a.dto.IpAddrDto;
 import io.github.ganenkovna.util.StringUtils;
 import java.util.ArrayList;
 import java.util.List;
@@ -58,12 +59,12 @@ public class HostInterfacesConfigDTO {
   @JsonProperty("hostInterfaces")
   private final List<HostInterfaceDTO> hostInterfaces = new ArrayList<>();
 
-  public HostInterfacesConfigDTO(List<InterfaceDto> parsedInterfaces, String hostIp) {
+  public HostInterfacesConfigDTO(List<IpAddrDto> parsedInterfaces, String hostIp) {
     Objects.requireNonNull(hostIp, "hostIp == null");
     Objects.requireNonNull(parsedInterfaces, "parsedInterfaces == null");
     boolean mgmtAssigned = false;
 
-    for (InterfaceDto parsedInterface : parsedInterfaces) {
+    for (IpAddrDto parsedInterface : parsedInterfaces) {
       if (parsedInterface == null) {
         continue;
       }
@@ -72,8 +73,7 @@ public class HostInterfacesConfigDTO {
         continue;
       }
 
-      final String interfaceName = parsedInterface
-          .getInterfaceParams().getName();
+      final String interfaceName = parsedInterface.ifname();
       boolean isMgmtHere = false;
 
       if (!mgmtAssigned && interfaceHasRequiredIp(parsedInterface, hostIp)) {
@@ -253,38 +253,34 @@ public class HostInterfacesConfigDTO {
     return -1;
   }
 
-  private static boolean interfaceHasRequiredIp(InterfaceDto itf, String requiredIp) {
-    // IPv4
-    if (itf.getIpv4() != null) {
-      for (InterfaceIpv4ConfigDto ip4 : itf.getIpv4()) {
-        if (ip4 == null) {
-          continue;
-        }
-        final String address = ip4.getAddress();
-        if (requiredIp.equals(address)) {
-          return true;
-        }
-      }
-    }
-    // IPv6
-    if (itf.getIpv6() != null) {
-      for (InterfaceIpv6ConfigDto ip6 : itf.getIpv6()) {
-        if (ip6 == null) {
-          continue;
-        }
-        final String address = ip6.getAddress();
-        if (requiredIp.equals(address)) {
-          return true;
+  private static boolean interfaceHasRequiredIp(IpAddrDto itf, String requiredIp) {
+    if (itf != null) {
+      final List<AddrInfoDto> addrInfo = itf.addrInfo();
+      if (addrInfo != null || !addrInfo.isEmpty()) {
+        for(AddrInfoDto info : addrInfo) {
+          if (info == null) {
+            continue;
+          }
+
+          if (info instanceof InetAddrInfoDto ipv4) {
+            if (requiredIp.equals(ipv4.local())) {
+              return true;
+            }
+          } else if (info instanceof Inet6AddrInfoDto ipv6) {
+            if (requiredIp.equals(ipv6.local())) {
+              return true;
+            }
+          }
         }
       }
     }
     return false;
   }
 
-  private static boolean isLoopback(InterfaceDto interfaceDto) {
+  private static boolean isLoopback(IpAddrDto interfaceDto) {
     Objects.requireNonNull(interfaceDto, "interfaceDto == null");
     String linkType = normalizeForDto(
-        interfaceDto.getInterfacePhysicalParams().getLinkType(),
+        interfaceDto.linkType(),
         "linkType");
     return LOOPBACK_LINK_TYPE.equalsIgnoreCase(linkType);
   }

@@ -4,8 +4,8 @@ import io.github.ganenkovna.util.ip.dto.RouteFlag;
 import io.github.ganenkovna.util.ip.dto.RouteProtocol;
 import io.github.ganenkovna.util.ip.dto.RouteScope;
 import io.github.ganenkovna.util.ip.dto.RouteType;
+import java.util.EnumSet;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * DTO, представляющий информацию о маршруте из вывода команды {@code ip -j route}.
@@ -79,7 +79,7 @@ public record IpRoDTO(
     RouteScope scope,
     RouteType type,
     String prefsrc,
-    Set<RouteFlag> flags,
+    EnumSet<RouteFlag> flags,
     Integer metric,
     Map<String, Object> unparsedParams
 ) {}

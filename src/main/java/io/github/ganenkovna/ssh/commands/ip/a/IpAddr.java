@@ -2,8 +2,8 @@ package io.github.ganenkovna.ssh.commands.ip.a;
 
 import com.jcraft.jsch.Session;
 import io.github.ganenkovna.ssh.client.SshChannel;
-import io.github.ganenkovna.ssh.commands.ip.a.dto.InterfaceDto;
-import io.github.ganenkovna.ssh.commands.ip.a.service.IpAParser;
+import io.github.ganenkovna.ssh.commands.ip.a.dto.IpAddrDto;
+import io.github.ganenkovna.ssh.commands.ip.a.service.IpAddrParser;
 import java.util.List;
 
 /**
@@ -11,7 +11,7 @@ import java.util.List;
  * в список DTO сетевых интерфейсов.
  *
  * <p>Команда вызывается по SSH через {@link SshChannel},
- * а текстовый вывод разбирается парсером {@link IpAParser}.</p>
+ * а текстовый вывод разбирается парсером {@link IpAddrParser}.</p>
  *
  * <p>Перед выполнением отключается цветовая разметка вывода
  * ({@code IPROUTE_COLOR=never}, {@code -c=never}) — это гарантирует, что парсер
@@ -30,15 +30,15 @@ import java.util.List;
  *     так как не содержит изменяемых полей.
  *
  * @see SshChannel
- * @see IpAParser
- * @see InterfaceDto
+ * @see IpAddrParser
+ * @see IpAddrDto
  */
-public final class IpA {
-  private static final String CMD_IP_A = "IPROUTE_COLOR=never ip -c=never a";
+public final class IpAddr {
+  private static final String CMD_IP_A = "IPROUTE_COLOR=never ip -c=never -j a";
   private static final String COMMAND = "ip a";
 
   /** Запрет инстанцирования. */
-  private IpA() {
+  private IpAddr() {
     throw new AssertionError("No instances");
   }
 
@@ -54,9 +54,9 @@ public final class IpA {
    * @throws IllegalStateException если команда {@code ip a} завершилась с ненулевым кодом
    *                               или произошла ошибка выполнения
    * @see SshChannel
-   * @see IpAParser
+   * @see IpAddrParser
    */
-  public static List<InterfaceDto> showInterfaces(Session session) {
+  public static List<IpAddrDto> showInterfaces(Session session) {
     SshChannel channel = new SshChannel(session);
     final String[] result = channel.execChannel(CMD_IP_A);
 
@@ -75,7 +75,7 @@ public final class IpA {
     }
 
     if (exitCode == 0) {
-      return IpAParser.parseOutput(result[1]);
+      return IpAddrParser.parseOutput(result[1]);
     } else {
       throw new IllegalStateException("Команда '" + COMMAND + "' не была успешно выполнена"
           + "\nКод завершения: " + exitCode

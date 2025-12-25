@@ -1,8 +1,7 @@
 package io.github.ganenkovna.ssh.commands.cat.vlan.service;
 
-import static io.github.ganenkovna.ssh.commands.ip.a.service.ParserUtils.trimOutputStrings;
-
 import io.github.ganenkovna.ssh.commands.cat.vlan.dto.VlanInterfaceDto;
+import io.github.ganenkovna.util.StringUtils;
 import io.github.ganenkovna.util.ip.VlanValidation;
 import io.github.ganenkovna.util.parser.ParsersUtils;
 import java.util.ArrayList;
@@ -48,7 +47,7 @@ public final class VlanConfigParser {
       return Collections.emptyList();
     }
 
-    final String[] lines = trimOutputStrings(vlanConfigOutput);
+    final String[] lines = StringUtils.trimOutputStrings(vlanConfigOutput);
     final List<VlanInterfaceDto> vlanInterfaces = new ArrayList<>();
 
     for (String line : lines) {

@@ -12,9 +12,9 @@ import io.github.ganenkovna.util.ip.dto.service.RouteFlagDeserializer;
 import io.github.ganenkovna.util.ip.dto.service.RouteProtocolDeserializer;
 import io.github.ganenkovna.util.ip.dto.service.RouteScopeDeserializer;
 import io.github.ganenkovna.util.ip.dto.service.RouteTypeDeserializer;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.Setter;
@@ -117,7 +117,7 @@ public final class IpRoPOJO implements CaptureUnknown {
    * или если все значения флагов оказались неизвестными.</p>
    */
   @JsonDeserialize(using = RouteFlagDeserializer.class)
-  private Set<RouteFlag> flags;
+  private EnumSet<RouteFlag> flags;
 
   /**
    * Метрика маршрута.

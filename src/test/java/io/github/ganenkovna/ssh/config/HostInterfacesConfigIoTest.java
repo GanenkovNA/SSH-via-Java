@@ -8,7 +8,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.jcraft.jsch.Session;
-import io.github.ganenkovna.ssh.commands.ip.a.IpA;
+import io.github.ganenkovna.ssh.commands.ip.a.IpAddr;
 import io.github.ganenkovna.ssh.host.HostConfigIO;
 import io.github.ganenkovna.ssh.host.dto.HostInterfacesConfigDTO;
 import java.io.IOException;
@@ -31,7 +31,7 @@ import io.github.ganenkovna.ssh.TestBase;
  *
  * @see HostConfigIO
  * @see HostInterfacesConfigDTO
- * @see IpA
+ * @see IpAddr
  */
 public class HostInterfacesConfigIoTest extends TestBase {
   /** Временный JSON, используемый для отладочного вывода. Может быть пустым, никогда не {@code null}. */
@@ -55,14 +55,14 @@ public class HostInterfacesConfigIoTest extends TestBase {
    * <p>Проверяется, что полученный список интерфейсов не пуст, а обязательные поля инициализированы.</p>
    *
    * @throws RuntimeException при ошибках SSH/парсинга
-   * @see IpA#showInterfaces(Session) 
+   * @see IpAddr#showInterfaces(Session)
    * @see HostInterfacesConfigDTO
    */
   @Test
   @DisplayName("DTO из ip a → список интерфейсов не пуст")
   public void shouldReturnListOfHostInterfaces() {
     hostInterfacesConfig = new HostInterfacesConfigDTO(
-        IpA.showInterfaces(currentSession),
+        IpAddr.showInterfaces(currentSession),
         hostConfig.getConnectionConfig().host());
 
     try {
@@ -92,7 +92,7 @@ public class HostInterfacesConfigIoTest extends TestBase {
     throws IOException {
     Path hostConfigsDirPath = Path.of(hostConfigsDir);
     hostInterfacesConfig = new HostInterfacesConfigDTO(
-        IpA.showInterfaces(currentSession),
+        IpAddr.showInterfaces(currentSession),
         hostConfig.getConnectionConfig().host());
 
     // 2) пишем файл атомарно

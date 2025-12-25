@@ -1,5 +1,6 @@
 package io.github.ganenkovna.util;
 
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -164,5 +165,32 @@ public final class StringUtils {
       throw new IllegalArgumentException(emptyMsg);
     }
     return trimmed;
+  }
+
+  /**
+   * Разбивает многострочный вывод команды на чистые строки.
+   *
+   * <p>Выполняет:
+   *   <ol>
+   *     <li>Разделение по символу новой строки
+   *     <li>Удаление пробелов по краям (trim)
+   *     <li>Фильтрацию пустых строк
+   *   </ol>
+   *
+   * @param ipAOutput многострочный вывод команды {@code ip a}
+   * @return массив непустых строк без пробельных символов по краям
+   * @throws NullPointerException если ipAOutput равен {@code null}
+   */
+  public static String[] trimOutputStrings(String ipAOutput) {
+    String[] lines = ipAOutput.split("\n");
+    List<String> listOfLines = new java.util.ArrayList<>();
+
+    for (int i = 0; i < lines.length; i++) {
+      lines[i] = lines[i].trim();
+      if (!lines[i].isEmpty()) {
+        listOfLines.add(lines[i]);
+      }
+    }
+    return listOfLines.toArray(new String[0]);
   }
 }

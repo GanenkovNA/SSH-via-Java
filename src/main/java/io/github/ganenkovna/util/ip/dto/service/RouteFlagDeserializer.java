@@ -7,9 +7,8 @@ import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import io.github.ganenkovna.util.ip.dto.RouteFlag;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.EnumSet;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Jackson-десериализатор для преобразования списка строковых флагов маршрута
@@ -42,7 +41,7 @@ import java.util.Set;
  * @see RouteFlag#getIgnoreCase(String)
  * @see CaptureUnknown
  */
-public class RouteFlagDeserializer extends StdDeserializer<Set<RouteFlag>> {
+public final class RouteFlagDeserializer extends StdDeserializer<EnumSet<RouteFlag>> {
 
   /**
    * Создаёт десериализатор для набора флагов {@link RouteFlag}.
@@ -67,13 +66,13 @@ public class RouteFlagDeserializer extends StdDeserializer<Set<RouteFlag>> {
    * @throws IOException при ошибке чтения JSON
    */
   @Override
-  public Set<RouteFlag> deserialize(JsonParser p, DeserializationContext ctxt)
+  public EnumSet<RouteFlag> deserialize(JsonParser p, DeserializationContext ctxt)
       throws IOException {
     if (!p.isExpectedStartArrayToken()){
       return null;
     }
 
-    Set<RouteFlag> result = new HashSet<>();
+    EnumSet<RouteFlag> result = EnumSet.noneOf(RouteFlag.class);
     List<String> unknownFlags = new ArrayList<>();
 
     while (p.nextToken() != JsonToken.END_ARRAY){

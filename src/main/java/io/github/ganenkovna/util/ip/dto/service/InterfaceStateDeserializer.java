@@ -39,7 +39,7 @@ import java.io.IOException;
  * @see InterfaceState#getIgnoreCase(String)
  * @see CaptureUnknown
  */
-public class InterfaceStateDeserializer extends StdDeserializer<InterfaceState> {
+public final class InterfaceStateDeserializer extends StdDeserializer<InterfaceState> {
 
   /**
    * Создаёт десериализатор для {@link InterfaceState}.
@@ -83,7 +83,7 @@ public class InterfaceStateDeserializer extends StdDeserializer<InterfaceState> 
       Object current = ctxt.getParser().getCurrentValue();
 
       if(current instanceof CaptureUnknown cu) {
-        cu.captureUnknown("state", value);
+        cu.captureUnknown("operstate", value);
       }
 
       return null; // или DEFAULT

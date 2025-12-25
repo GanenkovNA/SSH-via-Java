@@ -7,9 +7,8 @@ import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import io.github.ganenkovna.util.ip.dto.InterfaceFlag;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.EnumSet;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Jackson-десериализатор для преобразования списка строковых флагов
@@ -46,7 +45,7 @@ import java.util.Set;
  * @see InterfaceFlag#getIgnoreCase(String)
  * @see CaptureUnknown
  */
-public class InterfaceFlagDeserializer extends StdDeserializer<Set<InterfaceFlag>> {
+public final class InterfaceFlagDeserializer extends StdDeserializer<EnumSet<InterfaceFlag>> {
 
   /**
    * Создаёт десериализатор для набора флагов {@link InterfaceFlag}.
@@ -71,13 +70,13 @@ public class InterfaceFlagDeserializer extends StdDeserializer<Set<InterfaceFlag
    * @throws IOException при ошибке чтения JSON
    */
   @Override
-  public Set<InterfaceFlag> deserialize(JsonParser p, DeserializationContext ctxt)
+  public EnumSet<InterfaceFlag> deserialize(JsonParser p, DeserializationContext ctxt)
       throws IOException {
     if (!p.isExpectedStartArrayToken()){
       return null;
     }
 
-    Set<InterfaceFlag> result = new HashSet<>();
+    EnumSet<InterfaceFlag> result = EnumSet.noneOf(InterfaceFlag.class);
     List<String> unknownFlags = new ArrayList<>();
 
     while (p.nextToken() != JsonToken.END_ARRAY){

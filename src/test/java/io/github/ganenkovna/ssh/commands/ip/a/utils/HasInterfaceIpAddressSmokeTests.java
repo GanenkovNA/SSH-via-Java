@@ -1,13 +1,14 @@
 package io.github.ganenkovna.ssh.commands.ip.a.utils;
 
-import static io.github.ganenkovna.ssh.commands.ip.a.utils.IpATestSupport.hasInterfaceIpAddress;
+import static io.github.ganenkovna.ssh.commands.ip.a.utils.IpAddrTestSupport.hasInterfaceIpAddress;
 import io.github.ganenkovna.ssh.TestBase;
+import io.github.ganenkovna.ssh.commands.ip.a.IpAddr;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 /**
- * Smoke-тесты для метода {@link IpATestSupport#hasInterfaceIpAddress}.
+ * Smoke-тесты для метода {@link IpAddrTestSupport#hasInterfaceIpAddress}.
  *
  * <p>Проверяют базовую корректность работы утилиты при анализе вывода {@code ip a}
  * в рамках активной SSH-сессии, полученной от {@link TestBase}.
@@ -20,19 +21,19 @@ import org.junit.jupiter.api.Test;
  *   <li>интерфейс не содержит указанный IP-адрес (ожидается {@code false}).</li>
  * </ul>
  *
- * @see IpATestSupport#hasInterfaceIpAddress
- * @see io.github.ganenkovna.ssh.commands.ip.a.IpA#showInterfaces(com.jcraft.jsch.Session)
+ * @see IpAddrTestSupport#hasInterfaceIpAddress
+ * @see IpAddr#showInterfaces(com.jcraft.jsch.Session)
  */
 public class HasInterfaceIpAddressSmokeTests extends TestBase {
   /** Имя тестового интерфейса; строго не {@code null}. */
-  private static final String testInterface = "enp0s9";
+  private static final String testInterface = "eth1";
   /** Адрес, который гарантированно существует на стенде. */
   private static final String validTestAddress = "192.168.10.10/24";
   /** Адрес, который гарантированно отсутствует на стенде. */
   private static final String invalidTestAddress = "192.168.10.9/24";
 
   /**
-   * Проверяет, что {@link IpATestSupport#hasInterfaceIpAddress} возвращает {@code true},
+   * Проверяет, что {@link IpAddrTestSupport#hasInterfaceIpAddress} возвращает {@code true},
    * если интерфейс действительно содержит указанный IP-адрес.
    */
   @Test
@@ -43,7 +44,7 @@ public class HasInterfaceIpAddressSmokeTests extends TestBase {
   }
 
   /**
-   * Проверяет, что {@link IpATestSupport#hasInterfaceIpAddress} возвращает {@code false},
+   * Проверяет, что {@link IpAddrTestSupport#hasInterfaceIpAddress} возвращает {@code false},
    * если интерфейс не содержит указанный IP-адрес.
    */
   @Test

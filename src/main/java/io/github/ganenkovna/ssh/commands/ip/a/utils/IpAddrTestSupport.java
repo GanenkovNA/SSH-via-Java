@@ -3,10 +3,10 @@ package io.github.ganenkovna.ssh.commands.ip.a.utils;
 import static io.github.ganenkovna.util.StringUtils.normalizeForDto;
 
 import com.jcraft.jsch.Session;
-import io.github.ganenkovna.ssh.commands.ip.a.IpA;
-import io.github.ganenkovna.ssh.commands.ip.a.dto.InterfaceDto;
-import io.github.ganenkovna.ssh.commands.ip.a.dto.addr.v4.InterfaceIpv4ConfigDto;
-import io.github.ganenkovna.ssh.commands.ip.a.dto.addr.v6.InterfaceIpv6ConfigDto;
+import io.github.ganenkovna.ssh.commands.ip.a.IpAddr;
+import io.github.ganenkovna.ssh.commands.ip.a.dto.AddrInfoDto;
+import io.github.ganenkovna.ssh.commands.ip.a.dto.IpAddrDto;
+import io.github.ganenkovna.ssh.commands.ip.a.dto.IpAddrInfo;
 import io.github.ganenkovna.util.StringUtils;
 import io.github.ganenkovna.util.ip.VlanValidation;
 import java.util.List;
@@ -17,7 +17,7 @@ import java.util.Objects;
  *
  * <p>Класс предназначен исключительно для тестов; в продуктивном коде не используется.
  * Все методы статические, состояние отсутствует. Позволяет выполнять базовые проверки
- * данных, полученных через {@link IpA#showInterfaces(Session)}, без дублирования кода
+ * данных, полученных через {@link IpAddr#showInterfaces(Session)}, без дублирования кода
  * в тестах.</p>
  *
  * <p>Принципы работы:</p>
@@ -29,9 +29,9 @@ import java.util.Objects;
  *   <li>коллекции из DTO считаются «никогда не {@code null}, могут быть пустыми».</li>
  * </ul>
  */
-public final class IpATestSupport {
+public final class IpAddrTestSupport {
   /** Запрет инстанцирования. */
-  private IpATestSupport() {
+  private IpAddrTestSupport() {
     throw new AssertionError("No instances");
   }
 
@@ -45,16 +45,15 @@ public final class IpATestSupport {
    * @return {@code true}, если интерфейс найден; иначе {@code false}
    * @throws NullPointerException если {@code session} равна {@code null}
    * @throws IllegalArgumentException если {@code interfaceName} пустой/пробельный
-   * @see IpA#showInterfaces(Session)
+   * @see IpAddr#showInterfaces(Session)
    */
   public static boolean interfaceExists(Session session, String interfaceName) {
     Objects.requireNonNull(session);
     interfaceName = normalizeForDto(interfaceName, "Название интерфейса");
 
-    List<InterfaceDto> interfaces = IpA.showInterfaces(session);
-    for (InterfaceDto it : interfaces) {
-      if (interfaceName.equalsIgnoreCase(
-          it.getInterfaceParams().getName())) {
+    List<IpAddrDto> interfaces = IpAddr.showInterfaces(session);
+    for (IpAddrDto it : interfaces) {
+      if (interfaceName.equalsIgnoreCase(it.ifname())) {
         return true;
       }
     }
@@ -77,7 +76,7 @@ public final class IpATestSupport {
    * @throws NullPointerException если любой из аргументов равен {@code null}
    * @throws IllegalArgumentException если {@code interfaceName} или {@code ipAddress}
    *         пустой/пробельный (см. {@link StringUtils#normalizeForDto(String, String)})
-   * @see IpA#showInterfaces(Session)
+   * @see IpAddr#showInterfaces(Session)
    */
   public static boolean hasInterfaceIpAddress(
       Session session, String interfaceName, String ipAddress) {
@@ -85,26 +84,23 @@ public final class IpATestSupport {
     interfaceName = normalizeForDto(interfaceName, "Название интерфейса");
     ipAddress = normalizeForDto(ipAddress, "IP-адрес");
 
-    List<InterfaceDto> interfaces = IpA.showInterfaces(session);
+    List<IpAddrDto> interfaces = IpAddr.showInterfaces(session);
 
-    for (InterfaceDto interfaceDto : interfaces) {
+    for (IpAddrDto interfaceDto : interfaces) {
       // находим нужный интерфейс
-      if (interfaceName.equalsIgnoreCase(
-          interfaceDto.getInterfaceParams().getName())) {
-        // проходимся по IPv4
-        for (InterfaceIpv4ConfigDto ipv4ConfigDto : interfaceDto.getIpv4()) {
-          String interfaceIpv4Address = ipv4ConfigDto.getAddress()
-              + "/" + ipv4ConfigDto.getPrefix();
-          if (ipAddress.equals(interfaceIpv4Address)) {
-            return true;
+      if (interfaceName.equalsIgnoreCase(interfaceDto.ifname())) {
+        final List<AddrInfoDto> addresses = interfaceDto.addrInfo();
+
+        for (AddrInfoDto addr : addresses) {
+          if(addr == null) {
+            continue;
           }
-        }
-        // проходимся по IPv6
-        for (InterfaceIpv6ConfigDto ipv6ConfigDto : interfaceDto.getIpv6()) {
-          String interfaceIpv6Address = ipv6ConfigDto.getAddress()
-              + "/" + ipv6ConfigDto.getPrefix();
-          if (ipAddress.equals(interfaceIpv6Address)) {
-            return true;
+
+          if(addr instanceof IpAddrInfo ip) {
+            String interfaceIpv4Address = ip.local() + "/" + ip.prefixlen();
+            if (ipAddress.equals(interfaceIpv4Address)) {
+              return true;
+            }
           }
         }
       }
@@ -124,7 +120,7 @@ public final class IpATestSupport {
    *                                  или {@code vlanId} вне диапазона
    * @see #getVlanInterfaceName(String, int)
    * @see VlanValidation#validateVlanId(int)
-   * @see IpA#showInterfaces(Session)
+   * @see IpAddr#showInterfaces(Session)
    */
   public static boolean vlanInterfaceExists(Session session, String interfaceName, int vlanId) {
     Objects.requireNonNull(session);
@@ -146,7 +142,7 @@ public final class IpATestSupport {
    * @throws IllegalArgumentException если строковые аргументы пустые/пробельные
    *                                  или {@code vlanId} вне диапазона
    * @see #getVlanInterfaceName(String, int)
-   * @see IpA#showInterfaces(Session)
+   * @see IpAddr#showInterfaces(Session)
    */
   public static boolean hasVlanInterfaceIpAddress(
       Session session, String interfaceName, int vlanId, String ipAddress) {
@@ -171,6 +167,6 @@ public final class IpATestSupport {
   public static String getVlanInterfaceName(String interfaceName, int vlanId) {
     interfaceName = normalizeForDto(interfaceName, "Название интерфейса");
     VlanValidation.validateVlanId(vlanId);
-    return interfaceName + "." + vlanId + "@" + interfaceName;
+    return interfaceName + "." + vlanId;
   }
 }
