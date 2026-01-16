@@ -86,7 +86,7 @@ public final class InterfaceStateDeserializer extends StdDeserializer<InterfaceS
         cu.captureUnknown("operstate", value);
       }
 
-      return null; // или DEFAULT
+      return null;
     }
   }
 }
